@@ -9,3 +9,9 @@ server.get("/", (req, res) => {
 });
 
 module.exports = server;
+
+// 1.  
+// 2.
+// 3.
+// 4. 
+// 5.
