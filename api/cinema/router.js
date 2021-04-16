@@ -4,8 +4,8 @@ const Cinema = require("./model");
 router.get("/", async (req, res, next) => {
   Cinema.find()
     .exec()
-    .then((ticket) => {
-      res.status(200).json();
+    .then((cinemas) => {
+      res.status(200).json(cinemas);
     })
     .catch(next);
 });
@@ -13,8 +13,8 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   Cinema.findById()
     .exec()
-    .then((ticket) => {
-      res.status(200).json();
+    .then((cinema) => {
+      res.status(200).json(cinema);
     })
     .catch(next);
 });
