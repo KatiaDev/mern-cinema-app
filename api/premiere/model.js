@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
 const premiereSchema = new mongoose.Schema({
-  film: {
+  movie: {
     type: mongoose.Types.ObjectId,
-    ref: "Films",
+    ref: "Movies",
   },
 
-  cinematograf: {
+  cinema: {
     type: mongoose.Types.ObjectId,
-    ref: "Cinematografphs",
+    ref: "Cinemas",
   },
-  premier_date: {
+  premiere_date: {
     type: Date,
     required: true,
   },
