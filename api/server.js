@@ -22,13 +22,17 @@ const connectDB = async () => {
 connectDB();
 
 const server = express();
+const error = require("./middleware/error");
+const movieRouter = require("./movie/router");
 
 server.use(express.json());
+server.use("/api/movies", movieRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to our Cinema !</h1>`);
 });
 
+server.use(error);
 module.exports = server;
 
 // 1.
