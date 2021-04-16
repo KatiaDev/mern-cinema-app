@@ -1,38 +1,20 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  firstname: {
+const cinemaSchema = new mongoose.Schema({
+  name: {
     type: String,
-    require: true,
-  },
-  lastname: {
-    type: String,
-    require: true,
-  },
-  age: {
-    type: Number,
-    require: true,
-  },
-  email: {
-    type: String,
-    require: true,
+    required: true,
     unique: true,
   },
-  username: {
+  location: {
     type: String,
-    require: true,
-    unique: true,
+    required: true,
   },
-  password: {
+  contact: {
     type: String,
-    require: true,
-  },
-  active: {
-    type: Boolean,
-    default: true,
+    contact: true,
   },
 });
 
-const modelUser = mongoose.model("Users", userSchema);
-
-export default modelUser;
+const cinemaModel = mongoose.model("Cinemas", cinemaSchema);
+module.exports = cinemaModel;
