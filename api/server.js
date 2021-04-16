@@ -1,13 +1,11 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@cluster0.8bs0p.mongodb.net/Cinema?retryWrites=true&w=majority`,
+      `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@cluster0.8bs0p.mongodb.net/${process.env.MONGO_DBNAME}?retryWrites=true&w=majority`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -30,9 +28,3 @@ server.get("/", (req, res) => {
 });
 
 module.exports = server;
-
-// 1.
-// 2.
-// 3.
-// 4.
-// 5.
