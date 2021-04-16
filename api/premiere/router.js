@@ -1,20 +1,20 @@
 const router = require("express").Router();
-const Premiers = require("./model");
+const Premieres = require("./model");
 
 router.get("/", async (req, res, next) => {
-  Premiers.find()
+  Premieres.find()
     .exec()
-    .then((premier) => {
-      res.status(200).json(premier);
+    .then((premieres) => {
+      res.status(200).json(premieres);
     })
     .catch(next);
 });
 
 router.get("/:id", async (req, res, next) => {
-  Premiers.findById()
+  Premieres.findById()
     .exec()
-    .then((premier) => {
-      res.status(200).json(premier);
+    .then((premiere) => {
+      res.status(200).json(premiere);
     })
     .catch(next);
 });
