@@ -36,7 +36,7 @@ router.put("/:news_id", async (req, res, next) => {
     return acc;
   }, {});
   try {
-    const updatedArticle = await News.findOneAndUpdate(
+    const updatedArticle = await News.findByIdAndUpdate(
       req.params.news_id,
       bodyReducer
     ).exec();

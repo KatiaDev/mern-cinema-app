@@ -8,6 +8,7 @@ const movieRouter = require("./movie/router");
 const cinemaRouter = require("./cinema/router");
 const newsRouter = require("./news/router");
 const hallRouter = require("./hall/router");
+const seatRouter = require("./seat/router");
 
 const connectDB = async () => {
   try {
@@ -33,6 +34,7 @@ server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
 server.use("/api/news", newsRouter);
 server.use("/api/halls", hallRouter);
+server.use("/api/seats", seatRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to our Cinema !</h1>`);

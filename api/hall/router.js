@@ -36,7 +36,7 @@ router.put("/:hall_id", async (req, res, next) => {
     return acc;
   }, {});
   try {
-    const updatedHall = await Halls.findOneAndUpdate(
+    const updatedHall = await Halls.findByIdAndUpdate(
       req.params.hall_id,
       bodyReducer
     ).exec();
