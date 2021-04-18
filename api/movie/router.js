@@ -1,12 +1,9 @@
-const express = require("express");
-
-const Movie = require("./model");
-
-const router = express.Router();
+const router = require("express").Router();
+const Movies = require("./model");
 
 router.post("/", async (req, res, next) => {
   try {
-    const newMovie = await new Movie(req.body).save();
+    const newMovie = await new Movies(req.body).save();
     res.status(201).json(newMovie);
   } catch (err) {
     next(err);

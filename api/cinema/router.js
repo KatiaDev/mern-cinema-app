@@ -36,7 +36,7 @@ router.put("/:cinema_id", async (req, res, next) => {
     return acc;
   }, {});
   try {
-    const updatedCinema = await Cinemas.findOneAndUpdate(
+    const updatedCinema = await Cinemas.findByIdAndUpdate(
       req.params.cinema_id,
       bodyReducer
     ).exec();

@@ -18,11 +18,11 @@ const seatSchema = new mongoose.Schema({
     required: true,
   },
   seat_price: {
-    type: Number,
+    type: String,
     required: true,
   },
   seat_status: {
-    type: Boolean,
+    type: Number,
   },
 });
 
