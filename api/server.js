@@ -32,7 +32,7 @@ server.use(express.json());
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
 server.use("/api/news", newsRouter);
-server.use("./api/halls", hallRouter);
+server.use("/api/halls", hallRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to our Cinema !</h1>`);
