@@ -2,6 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
+const server = express();
+const error = require("./middleware/error");
+const movieRouter = require("./movie/router");
+const cinemaRouter = require("./cinema/router");
+const newsRouter = require("./news/router");
+const hallRouter = require("./hall/router");
+
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -18,13 +25,8 @@ const connectDB = async () => {
 };
 
 connectDB();
-
-const server = express();
-const error = require("./middleware/error");
-const movieRouter = require("./movie/router");
-const cinemaRouter = require("./cinema/router");
-const newsRouter = require("./news/router");
-const hallRouter = require("./hall/router");
+mongoose.set("useCreateIndex", true);
+mongoose.set("useFindAndModify", false);
 
 server.use(express.json());
 server.use("/api/movies", movieRouter);
