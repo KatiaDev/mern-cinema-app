@@ -22,9 +22,9 @@ router.get("/:ticket_id", async (req, res, next) => {
 router.put("/:ticket_id", async (req, res, next) => {
   const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
     if (
-      (req.body[curr] && curr !== "premieres") ||
-      (req.body[curr] && curr !== "users") ||
-      (req.body[curr] && curr !== "seats")
+      (req.body[curr] && curr !== "premier") ||
+      (req.body[curr] && curr !== "user") ||
+      (req.body[curr] && curr !== "seat")
     ) {
       acc[curr] = req.body[curr];
     }

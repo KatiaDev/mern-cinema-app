@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const ticketSchema =  new mongoose.Schema({
+const ticketSchema = new mongoose.Schema({
   reservation: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Reservations",
   },
   qrcode: {

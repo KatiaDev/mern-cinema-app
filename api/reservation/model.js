@@ -2,17 +2,17 @@ const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
   premier: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Premieres",
   },
 
   seat: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Seats",
   },
 
   user: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
   },
 

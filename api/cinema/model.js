@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const cinemaSchema = new mongoose.Schema({
   name: {
     type: String,

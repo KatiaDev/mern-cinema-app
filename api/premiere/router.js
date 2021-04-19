@@ -31,8 +31,8 @@ router.post("/", async (req, res, next) => {
 router.put("/:premiere_id", async (req, res, next) => {
   const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
     if (
-      (req.body[curr] && curr !== "movies") ||
-      (req.body[curr] && curr !== "cinemas")
+      (req.body[curr] && curr !== "movie") ||
+      (req.body[curr] && curr !== "cinema")
     ) {
       acc[curr] = req.body[curr];
     }

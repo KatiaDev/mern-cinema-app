@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const premiereSchema = new mongoose.Schema({
   movie: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Movies",
   },
 
   cinema: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Cinemas",
   },
   premiere_date: {
