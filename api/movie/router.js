@@ -4,8 +4,8 @@ const Movies = require("./model");
 router.get("/", async (req, res, next) => {
   Movies.find()
     .exec()
-    .then((movie) => {
-      res.status(200).json(movie);
+    .then((movies) => {
+      res.status(200).json(movies);
     })
     .catch(next);
 });
@@ -36,13 +36,13 @@ router.post("/", async (req, res, next) => {
   new Movies(req.body)
     .save()
     .then((newMovie) => {
-      res.status(200).json(newMovie);
+      res.status(201).json(newMovie);
     })
     .catch(next);
 });
 
 router.delete("/:movie_id", async (req, res, next) => {
-  Movies.findByIdAndUpdate(req.params.movie_id, { activ: false })
+  Movies.findByIdAndDelete(req.params.movie_id, { activ: false })
     .exec()
     .then((removeMovie) => {
       res.status(200).json(removeMovie);

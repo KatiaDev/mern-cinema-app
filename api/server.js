@@ -1,8 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-
+const bodyParser = require("body-parser");
 const server = express();
+const cloudinary = require("cloudinary").v2;
+
 const error = require("./middleware/error");
 const movieRouter = require("./movie/router");
 const cinemaRouter = require("./cinema/router");
@@ -13,6 +15,7 @@ const premierRouter = require("./premiere/router");
 const reservationRouter = require("./reservation/router");
 const ticketRouter = require("./ticket/router");
 const userRouter = require("./user/router");
+const imageRouter = require("../cloudinary/router");
 
 const connectDB = async () => {
   try {
@@ -33,7 +36,17 @@ connectDB();
 mongoose.set("useCreateIndex", true);
 mongoose.set("useFindAndModify", false);
 
-server.use(express.json());
+if (typeof process.env.CLOUDINARY_URL === "undefined") {
+  console.warn("!! cloudinary config is undefined !!");
+  console.warn("export CLOUDINARY_URL or set dotenv file");
+} else {
+  console.log("cloudinary config:");
+  console.log(cloudinary.config());
+}
+
+//server.use(express.json());
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: true }));
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
 server.use("/api/news", newsRouter);
@@ -43,6 +56,7 @@ server.use("/api/premieres", premierRouter);
 server.use("/api/reservations", reservationRouter);
 server.use("/api/tickets", ticketRouter);
 server.use("/api/users", userRouter);
+server.use(imageRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to our Cinema !</h1>`);
