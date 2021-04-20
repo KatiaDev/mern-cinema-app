@@ -12,10 +12,22 @@ const movieSchema = new mongoose.Schema({
     type: String,
   },
   actors: [],
-  age_restrict: Number,
-  duration: Number,
-  //image: {},
-  //trailer: {},
+  age_restrict: {
+    type: String,
+    require: true,
+  },
+  duration: {
+    type: String,
+    require: true,
+  },
+  image_url: {
+    type: String,
+    require: true,
+  },
+  video_url: {
+    type: String,
+    require: true,
+  },
 });
 
 const movieModel = mongoose.model("Movies", movieSchema);
