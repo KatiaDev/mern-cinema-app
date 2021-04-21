@@ -13,6 +13,7 @@ const premierRouter = require("./premiere/router");
 const reservationRouter = require("./reservation/router");
 const ticketRouter = require("./ticket/router");
 const userRouter = require("./user/router");
+const notificationRouter = require("./notification/router");
 
 const connectDB = async () => {
   try {
@@ -30,10 +31,10 @@ const connectDB = async () => {
 };
 
 connectDB();
+server.use(express.json());
 mongoose.set("useCreateIndex", true);
 mongoose.set("useFindAndModify", false);
 
-server.use(express.json());
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
 server.use("/api/news", newsRouter);
@@ -43,6 +44,7 @@ server.use("/api/premieres", premierRouter);
 server.use("/api/reservations", reservationRouter);
 server.use("/api/tickets", ticketRouter);
 server.use("/api/users", userRouter);
+server.use("/api/notifications", notificationRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to our Cinema !</h1>`);
