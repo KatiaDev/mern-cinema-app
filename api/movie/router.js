@@ -12,10 +12,15 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:movie_id", async (req, res, next) => {
-  Movies.findById()
+  Movies.findById(req.params.movie_id)
     .exec()
     .then((movie) => {
-      res.status(200).json(movie);
+      console.log("movie", movie);
+      res.status(200);
+      res.send(`<h1>${movie.title}</h1>
+      <img src=${movie.image_url}>
+      <video><source src=${movie.video_url} type="video/mp4" controls></video>
+      `);
     })
     .catch(next);
 });
