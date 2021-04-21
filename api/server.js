@@ -29,7 +29,6 @@ const connectDB = async () => {
     console.log("Failed to connect to MongoDB", err);
   }
 };
-
 connectDB();
 server.use(express.json());
 mongoose.set("useCreateIndex", true);

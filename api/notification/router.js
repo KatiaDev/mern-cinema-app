@@ -30,16 +30,11 @@ router.post("/", async (req, res, next) => {
 
 router.put("/:notification_id", async (req, res, next) => {
   const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    if (
-      (req.body[curr] && curr !== "movie") ||
-      (req.body[curr] && curr !== "cinema")
-    ) {
       acc[curr] = req.body[curr];
-    }
     return acc;
   }, {});
 
-  Notifications.findByIdAndUpdate(req.params.premiere_id, bodyReducer)
+  Notifications.findByIdAndUpdate(req.params.notification_id, bodyReducer)
     .exec()
     .then((updatedNoitification) => {
       res.status(200).json(updatedNoitification);
@@ -48,7 +43,7 @@ router.put("/:notification_id", async (req, res, next) => {
 });
 
 router.delete("/:notification_id", async (req, res, next) => {
-    Notifications.findByIdAndDelete(req.params.premiere_id).exec();
+    Notifications.findByIdAndDelete(req.params.notification_id).exec();
   res.status(200).json(deletedNotification).catch(next);
 });
 
