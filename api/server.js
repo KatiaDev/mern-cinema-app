@@ -16,6 +16,7 @@ const reservationRouter = require("./reservation/router");
 const ticketRouter = require("./ticket/router");
 const userRouter = require("./user/router");
 const imageRouter = require("../cloudinary/router");
+const notificationRouter = require("./notification/router");
 
 const connectDB = async () => {
   try {
@@ -31,8 +32,8 @@ const connectDB = async () => {
     console.log("Failed to connect to MongoDB", err);
   }
 };
-
 connectDB();
+server.use(express.json());
 mongoose.set("useCreateIndex", true);
 mongoose.set("useFindAndModify", false);
 
@@ -57,6 +58,7 @@ server.use("/api/reservations", reservationRouter);
 server.use("/api/tickets", ticketRouter);
 server.use("/api/users", userRouter);
 server.use(imageRouter);
+server.use("/api/notifications", notificationRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to Olymp Cinema !</h1>`);

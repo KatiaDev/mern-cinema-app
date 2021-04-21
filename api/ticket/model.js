@@ -9,6 +9,10 @@ const ticketSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  pay_type: {
+    type: String,
+    require: true,
+  },
   pay_date: {
     type: String,
     required: true,

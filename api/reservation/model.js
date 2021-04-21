@@ -11,7 +11,7 @@ const reservationSchema = new mongoose.Schema({
     ref: "Seats",
   },
 
-  user: {
+  parent_user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
   },
@@ -24,6 +24,7 @@ const reservationSchema = new mongoose.Schema({
   total_price: {
     type: Number,
   },
+  user_type: [],
 });
 
 const reservationModel = mongoose.model("Reservations", reservationSchema);
