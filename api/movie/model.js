@@ -11,22 +11,24 @@ const movieSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  actors: [],
+  actors: {
+    type: Array,
+  },
   age_restrict: {
-    type: String,
-    require: true,
+    type: Number,
+    required: true,
   },
   duration: {
     type: String,
-    require: true,
+    required: true,
   },
   image_url: {
     type: String,
-    require: true,
+    required: true,
   },
   video_url: {
     type: String,
-    require: true,
+    required: true,
   },
 });
 

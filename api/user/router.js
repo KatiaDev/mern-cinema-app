@@ -42,7 +42,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.delete("/:user_id", async (req, res, next) => {
-  Users.findByIdAndUpdate(req.params.user_id, { activ: false })
+  Users.findByIdAndDelete(req.params.user_id, { activ: false })
     .exec()
     .then((removeUser) => {
       res.status(200).json(removeUser);

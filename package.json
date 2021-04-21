@@ -11,6 +11,8 @@
   "author": "cebotari-marin, popa-ecaterina",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "cloudinary": "^1.25.1",
     "express": "^4.17.1",
     "mongoose": "^5.12.4",
     "nodemon": "^2.0.7"
