@@ -1,7 +1,9 @@
 const cloudinary = require("cloudinary").v2;
 const router = require("express").Router();
 
-router.post("/upload-image", (req, res) => {
+// *** image upload ***
+
+router.post("/upload-image", async (req, res) => {
   const data = {
     image: req.body.image,
   };
@@ -22,7 +24,9 @@ router.post("/upload-image", (req, res) => {
     });
 });
 
-router.post("/upload-video", (req, res) => {
+// *** video upload ***
+
+router.post("/upload-video", async (req, res) => {
   const data = {
     video: req.body.video,
   };
@@ -45,4 +49,5 @@ router.post("/upload-video", (req, res) => {
       });
     });
 });
+
 module.exports = router;
