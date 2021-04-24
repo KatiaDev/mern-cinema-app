@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const server = express();
 const cloudinary = require("cloudinary").v2;
 
-const error = require("./middleware/error");
 const movieRouter = require("./movie/router");
 const cinemaRouter = require("./cinema/router");
 const newsRouter = require("./news/router");
@@ -57,12 +56,17 @@ server.use("/api/premieres", premiereRouter);
 server.use("/api/reservations", reservationRouter);
 server.use("/api/tickets", ticketRouter);
 server.use("/api/users", userRouter);
-server.use(imageRouter);
 server.use("/api/notifications", notificationRouter);
+server.use(imageRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to Olymp Cinema !</h1>`);
 });
 
-server.use(error);
+server.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({ message: "Something went wrong, please try again." });
+});
+
 module.exports = server;
