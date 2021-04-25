@@ -1,8 +1,7 @@
 const { check, validationResult } = require("express-validator");
-const Users = require('./model');
+const Users = require("./model");
 
 const validateNewUser = async (req, res, next) => {
-
   await check("firstname")
     .isLength({ min: 3 })
     .withMessage("the firstname must have minimum length of 3")
@@ -29,25 +28,17 @@ const validateNewUser = async (req, res, next) => {
     .isEmail()
     .normalizeEmail()
     .withMessage("the specified mail does not match the rules")
-    .trim().custom(email =>{
-        return Users.find({
-          email,
-        }).then(user =>{
-          if(user.length>0){
-            throw ("Email is already registered");
-          }
-        })
-
+    .trim()
+    .custom((email) => {
+      return Users.find({
+        email,
+      }).then((user) => {
+        if (user.length > 0) {
+          throw "Email is already registered";
+        }
+      });
     })
     .run(req);
-
-  // await check("confirmPassword").custom((value, { req }) => {
-  //   if (value !== req.body.password) {
-  //     console.log(req.body.password, req.body.confirmPassword);
-  //     throw new Error("confirm password does not match");
-  //   }
-  //   return true;
-  // });
 
   const errors = validationResult(req);
 
@@ -57,6 +48,8 @@ const validateNewUser = async (req, res, next) => {
     next();
   }
 };
+
+
 
 module.exports = {
   validateNewUser,
