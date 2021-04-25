@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Movies = require("./model");
 const cloudinary = require("cloudinary").v2;
+const { validateMovie, checkMovieExists } = require("./middleware");
 
 router.get("/", async (req, res, next) => {
   Movies.find()
@@ -18,27 +19,32 @@ router.get("/:movie_id", async (req, res, next) => {
       console.log("movie", movie);
       res.status(200);
       res.send(`<h1>${movie.title}</h1>
-      <img src=${movie.image_url}>
-      <video><source src=${movie.video_url} type="video/mp4" controls></video>
+      <img src=${movie.image_url} style="display: block, margin: auto, width: 400px">
+      <iframe src=${movie.video_url} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe>
       `);
     })
     .catch(next);
 });
 
-router.put("/:movie_id", async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    acc[curr] = req.body[curr];
-    return acc;
-  }, {});
-  Movies.findByIdAndUpdate(req.params.movie_id, bodyReducer)
-    .exec()
-    .then(() => {
-      res.status(200).json(updatedMovie);
-    })
-    .catch(next);
-});
+router.put(
+  "/:movie_id",
+  validateMovie,
+  checkMovieExists,
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+      acc[curr] = req.body[curr];
+      return acc;
+    }, {});
+    Movies.findByIdAndUpdate(req.params.movie_id, bodyReducer)
+      .exec()
+      .then(() => {
+        res.status(200).json(updatedMovie);
+      })
+      .catch(next);
+  }
+);
 
-router.post("/", async (req, res, next) => {
+router.post("/", validateMovie, async (req, res, next) => {
   const { image_url, video_url } = req.body;
 
   const cloudinaryImageUploadMethod = async (file) => {
@@ -70,7 +76,7 @@ router.post("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.delete("/:movie_id", async (req, res, next) => {
+router.delete("/:movie_id", checkMovieExists, async (req, res, next) => {
   Movies.findByIdAndDelete(req.params.movie_id, { activ: false })
     .exec()
     .then((removeMovie) => {

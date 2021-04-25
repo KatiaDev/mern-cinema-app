@@ -11,7 +11,7 @@ const cinemaSchema = new mongoose.Schema({
   },
   contact: {
     type: String,
-    contact: true,
+    required: true,
   },
 });
 

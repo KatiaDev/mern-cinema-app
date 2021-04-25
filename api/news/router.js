@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const News = require("./model");
+const { validateNews, checkNewsExists } = require("./middleware");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -10,16 +11,11 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:news_id", async (req, res, next) => {
-  try {
-    const foundArticle = await News.findById(req.params.news_id).exec();
-    res.status(200).json(foundArticle);
-  } catch (err) {
-    next(err);
-  }
+router.get("/:news_id", checkNewsExists, (req, res, next) => {
+  res.status(200).json(foundArticle);
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", validateNews, async (req, res, next) => {
   try {
     const newArticle = await new News(req.body).save();
     res.status(201).json(newArticle);
@@ -28,25 +24,30 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:news_id", async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    if (req.body[curr]) {
-      acc[curr] = req.body[curr];
+router.put(
+  "/:news_id",
+  validateNews,
+  checkNewsExists,
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+      if (req.body[curr]) {
+        acc[curr] = req.body[curr];
+      }
+      return acc;
+    }, {});
+    try {
+      const updatedArticle = await News.findByIdAndUpdate(
+        req.params.news_id,
+        bodyReducer
+      ).exec();
+      res.status(200).json(updatedArticle);
+    } catch (err) {
+      next(err);
     }
-    return acc;
-  }, {});
-  try {
-    const updatedArticle = await News.findByIdAndUpdate(
-      req.params.news_id,
-      bodyReducer
-    ).exec();
-    res.status(200).json(updatedArticle);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.delete("/:news_id", async (req, res, next) => {
+router.delete("/:news_id", checkNewsExists, async (req, res, next) => {
   try {
     const deletedArticle = await News.findByIdAndDelete(
       req.params.news_id
