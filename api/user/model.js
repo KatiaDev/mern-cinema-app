@@ -31,9 +31,9 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  mobile:{
-    type:String,
-    require:true
+  mobile: {
+    type: String,
+    require: true,
   },
   active: {
     type: Boolean,
