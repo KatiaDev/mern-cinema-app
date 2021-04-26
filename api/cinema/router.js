@@ -13,7 +13,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:cinema_id", checkCinemaExists, async (req, res, next) => {
-  res.status(200).json(cinema);
+  res.status(200).json(req.cinema);
 });
 
 router.post("/", validateCinema, async (req, res, next) => {

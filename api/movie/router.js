@@ -12,14 +12,18 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:movie_id", async (req, res, next) => {
+router.get("/:movie_id", checkMovieExists, async (req, res, next) => {
+  res.status(200).json(movie);
+});
+
+router.get("/display/:movie_id", async (req, res, next) => {
   Movies.findById(req.params.movie_id)
     .exec()
     .then((movie) => {
       console.log("movie", movie);
       res.status(200);
       res.send(`<h1>${movie.title}</h1>
-      <img src=${movie.image_url} style="display: block, margin: auto, width: 400px">
+      <img src=${movie.image_url}>
       <iframe src=${movie.video_url} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe>
       `);
     })

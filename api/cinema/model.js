@@ -5,7 +5,11 @@ const cinemaSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  location: {
+  address: {
+    type: String,
+    required: true,
+  },
+  zip_code: {
     type: String,
     required: true,
   },
