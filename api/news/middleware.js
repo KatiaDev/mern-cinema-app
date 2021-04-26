@@ -1,8 +1,8 @@
 const News = require("./model");
 
 const validateNews = (req, res, next) => {
-  const { title, subtitle, image_url, content, date } = req.body;
-  if (!title || !subtitle || !image_url || !content || !date) {
+  const { title, subtitle, image_url, content} = req.body;
+  if (!title || !subtitle || !image_url || !content) {
     return res.status(400).json({ message: "Missing required field." });
   } else {
     next();
