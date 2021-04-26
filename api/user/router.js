@@ -11,8 +11,8 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:user_id", async (req, res, next) => {
-  Users.findById()
+router.get("/:user_id", middleware.checkUserExists, async (req, res, next) => {
+  Users.findById(req.params.user_id)
     .exec()
     .then((user) => {
       res.status(200).json(user);
@@ -20,19 +20,23 @@ router.get("/:user_id", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:user_id",  
-async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    acc[curr] = req.body[curr];
-    return acc;
-  }, {});
-  Users.findByIdAndUpdate(req.params.user_id, bodyReducer)
-    .exec()
-    .then(() => {
-      res.status(200).json(updatedUser);
-    })
-    .catch(next);
-});
+router.put(
+  "/:user_id",
+  middleware.validateNewUser,
+  middleware.checkUserExists,
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+      acc[curr] = req.body[curr];
+      return acc;
+    }, {});
+    Users.findByIdAndUpdate(req.params.user_id, bodyReducer)
+      .exec()
+      .then((updatedUser) => {
+        res.status(200).json(updatedUser);
+      })
+      .catch(next);
+  }
+);
 
 router.post("/", middleware.validateNewUser, async (req, res, next) => {
   new Users(req.body)
@@ -43,13 +47,17 @@ router.post("/", middleware.validateNewUser, async (req, res, next) => {
     .catch(next);
 });
 
-router.delete("/:user_id", async (req, res, next) => {
-  Users.findByIdAndDelete(req.params.user_id, { activ: false })
-    .exec()
-    .then((removeUser) => {
-      res.status(200).json(removeUser);
-    })
-    .catch(next);
-});
+router.delete(
+  "/:user_id",
+  middleware.checkUserExists,
+  async (req, res, next) => {
+    Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
+      .exec()
+      .then((removeUser) => {
+        res.status(200).json(removeUser);
+      })
+      .catch(next);
+  }
+);
 
 module.exports = router;

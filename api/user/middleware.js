@@ -56,21 +56,16 @@ const checkUserExists = async (req, res, next) => {
     .notEmpty()
     .withMessage("User is required")
     .custom((user) => {
-      return Users.findById(user)
+      return Users.findOne({ _id: req.params.user_id, active: true })
         .then((user) => {
           if (!user) {
-            throw " User is not found ";
+            return res.status(400).json(" User is not found ");
           }
         })
         .catch(next);
     })
     .run(req);
 
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
-  }
   next();
 };
 

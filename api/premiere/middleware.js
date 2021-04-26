@@ -2,39 +2,36 @@ const { check, validationResult } = require("express-validator");
 const Premieres = require("./model");
 
 const validateNewPremiere = async (req, res, next) => {
-  await check("movie_id")
+  await check("movie")
     .trim()
     .notEmpty()
     .withMessage("movie is required")
     .custom((movie) => {
-      return Premieres.findById(movie)
+      return Premieres.findOne({ movie })
         .exec()
         .then((movie) => {
           if (!movie) {
-            throw "Movie does not exist";
+            return res.status(404).json("Movie does not exist");
           }
         })
         .catch(next);
     })
     .run(req);
 
-  await check("cinema_id")
-    .trim()
-    .notEmpty()
-    .withMessage("cinema is required")
+  await check("cinema")
     .custom((cinema) => {
-      return Premieres.findById(cinema)
+      return Premieres.findOne({ cinema })
         .exec()
         .then((cinema) => {
           if (!cinema) {
-            throw "Cinema does not exist";
+            return res.status(404).json("Cinema not found");
           }
         })
         .catch(next);
     })
     .run(req);
 
-  await check("reserv_date")
+  await check("premiere_date")
     .trim()
     .notEmpty()
     .withMessage("Date premiere is required")
@@ -48,14 +45,6 @@ const validateNewPremiere = async (req, res, next) => {
     .notEmpty()
     .withMessage("price is required")
     .isNumeric()
-    .withMessage("Unknown format")
-    .run(req);
-
-  await check("active")
-    .trim()
-    .notEmpty()
-    .withMessage("status premiere is required")
-    .isBoolean()
     .withMessage("Unknown format")
     .run(req);
 
@@ -73,25 +62,19 @@ const validateNewPremiere = async (req, res, next) => {
 };
 
 const checkPremiereExists = async (req, res, next) => {
+
   await check("premiere_id")
-    .trim()
-    .notEmpty()
     .custom((premiere) => {
-      return Premieres.findById(premiere)
+      return Premieres.findOne({ _id: req.params.premiere_id, active: true })
         .then((premiere) => {
           if (!premiere) {
-            throw " Premiere is not found ";
+            return res.status(404).json(" Premiere is not found ");
           }
         })
         .catch(next);
     })
     .run(req);
 
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
-  }
   next();
 };
 

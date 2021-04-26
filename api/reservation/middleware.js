@@ -14,7 +14,11 @@ const validateNewReservation = async (req, res, next) => {
         .exec()
         .then((premier) => {
           if (premier.active === false) {
-            throw "The premiere of the selected movie is currently unavailable";
+            return res
+              .status(400)
+              .json(
+                "The premiere of the selected movie is currently unavailable"
+              );
           }
         })
         .catch(next);
