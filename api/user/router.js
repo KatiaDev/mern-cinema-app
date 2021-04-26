@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Users = require("./model");
+const middleware = require("./middleware");
 
 router.get("/", async (req, res, next) => {
   Users.find()
@@ -19,7 +20,8 @@ router.get("/:user_id", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:user_id", async (req, res, next) => {
+router.put("/:user_id",  
+async (req, res, next) => {
   const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
     acc[curr] = req.body[curr];
     return acc;
@@ -32,7 +34,7 @@ router.put("/:user_id", async (req, res, next) => {
     .catch(next);
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", middleware.validateNewUser, async (req, res, next) => {
   new Users(req.body)
     .save()
     .then((newUser) => {
