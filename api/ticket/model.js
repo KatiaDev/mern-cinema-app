@@ -4,6 +4,7 @@ const ticketSchema = new mongoose.Schema({
   reservation: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Reservations",
+    require: false,
   },
   qrcode: {
     type: String,
@@ -14,7 +15,7 @@ const ticketSchema = new mongoose.Schema({
     require: true,
   },
   pay_date: {
-    type: String,
+    type: Date,
     required: true,
   },
 });

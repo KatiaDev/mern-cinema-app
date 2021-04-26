@@ -23,6 +23,8 @@ const seatSchema = new mongoose.Schema({
   },
   seat_status: {
     type: Number,
+    require: true,
+    default: 0,
   },
 });
 

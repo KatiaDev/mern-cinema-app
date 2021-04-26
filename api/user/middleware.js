@@ -32,11 +32,13 @@ const validateNewUser = async (req, res, next) => {
     .custom((email) => {
       return Users.find({
         email,
-      }).then((user) => {
-        if (user.length > 0) {
-          throw "Email is already registered";
-        }
-      });
+      })
+        .then((user) => {
+          if (user.length > 0) {
+            throw "Email is already registered";
+          }
+        })
+        .catch(next);
     })
     .run(req);
 
@@ -44,13 +46,35 @@ const validateNewUser = async (req, res, next) => {
 
   if (!errors.isEmpty()) {
     res.status(400).json({ error: errors.array() });
-  } else {
-    next();
   }
+  next();
 };
 
+const checkUserExists = async (req, res, next) => {
+  await check("user_id")
+    .trim()
+    .notEmpty()
+    .withMessage("User is required")
+    .custom((user) => {
+      return Users.findById(user)
+        .then((user) => {
+          if (!user) {
+            throw " User is not found ";
+          }
+        })
+        .catch(next);
+    })
+    .run(req);
 
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(400).json({ error: errors.array() });
+  }
+  next();
+};
 
 module.exports = {
   validateNewUser,
+  checkUserExists,
 };
