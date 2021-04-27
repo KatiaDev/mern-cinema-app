@@ -14,6 +14,21 @@ const validateNewUser = async (req, res, next) => {
     .trim()
     .run(req);
 
+  await check("age")
+    .notEmpty()
+    .withMessage("then age is required")
+    .isNumeric()
+    .withMessage("invalid format")
+    .run(req);
+
+  await check("mobile")
+    .trim()
+    .notEmpty()
+    .withMessage("the mobile number is required")
+    .isMobilePhone()
+    .withMessage("mobile phone number is wrong")
+    .run(req);
+
   await check("password")
     .isLength({ min: 8, max: 15 })
     .withMessage("your password should have min and max length between 8-15")

@@ -5,7 +5,7 @@ const Premieres = require("../premiere/model");
 const Users = require("../user/model");
 
 const validateNewReservation = async (req, res, next) => {
-  await check("premier_id")
+  await check("premier")
     .trim()
     .notEmpty()
     .withMessage("Premiera movie is required")
@@ -13,9 +13,9 @@ const validateNewReservation = async (req, res, next) => {
       return Premieres.findById(premier)
         .exec()
         .then((premier) => {
-          if (premier.active === false) {
+          if (!premier || premier.active === false) {
             return res
-              .status(400)
+              .status(404)
               .json(
                 "The premiere of the selected movie is currently unavailable"
               );
@@ -25,7 +25,7 @@ const validateNewReservation = async (req, res, next) => {
     })
     .run(req);
 
-  await check("seat_id")
+  await check("seat")
     .trim()
     .notEmpty()
     .withMessage("Seat is required")
@@ -33,8 +33,8 @@ const validateNewReservation = async (req, res, next) => {
       return Seats.findById(seat)
         .exec()
         .then((seat) => {
-          if (seat.seat_status === 0) {
-            throw "Seat is not taken";
+          if (!seat || seat.available === true) {
+            return res.status(404).json("Seat is not taken");
           }
         })
         .catch(next);
@@ -49,8 +49,8 @@ const validateNewReservation = async (req, res, next) => {
       return Users.findById(user)
         .exec()
         .then((user) => {
-          if (user || user.active == false) {
-            throw "User does not exist";
+          if (!user || user.active == false) {
+            return res.status(404).json("User does not exist");
           }
         })
         .catch(next);
@@ -85,24 +85,17 @@ const validateNewReservation = async (req, res, next) => {
 
 const checkReservationExists = async (req, res, next) => {
   await check("reservation_id")
-    .notEmpty()
-    .trim()
     .custom((reservation) => {
-      return Reservations.findById(tireservationcket)
+      return Reservations.findById(reservation)
         .then((reservation) => {
           if (!reservation) {
-            throw " Reservation is not found ";
+            return res.status(404).json("Reservation is not found ");
           }
         })
         .catch(next);
     })
     .run(req);
 
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
-  }
   next();
 };
 
