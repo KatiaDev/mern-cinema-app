@@ -21,8 +21,9 @@ const seatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  seat_status: {
-    type: Number,
+  available: {
+    type: Boolean,
+    default: true,
   },
 });
 

@@ -13,7 +13,12 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:cinema_id", checkCinemaExists, async (req, res, next) => {
-  res.status(200).json(req.cinema);
+  Cinemas.findById(req.params.cinema_id)
+    .exec()
+    .then((cinema) => {
+      res.status(200).json(cinema);
+    })
+    .catch(next);
 });
 
 router.post("/", validateCinema, async (req, res, next) => {
@@ -41,8 +46,10 @@ router.put(
       return acc;
     }, {});
     try {
-      const updatedCinema = await Cinemas.findByIdAndUpdate(
-        req.params.cinema_id,
+      const updatedCinema = await Cinemas.findOneAndUpdate(
+        {
+          _id: req.params.cinema_id,
+        },
         bodyReducer
       ).exec();
       res.status(200).json(updatedCinema);
