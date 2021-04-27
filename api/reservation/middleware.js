@@ -5,15 +5,15 @@ const Premieres = require("../premiere/model");
 const Users = require("../user/model");
 
 const validateNewReservation = async (req, res, next) => {
-  await check("premier")
+  await check("premiere")
     .trim()
     .notEmpty()
     .withMessage("Premiera movie is required")
-    .custom((premier) => {
-      return Premieres.findById(premier)
+    .custom((premiere) => {
+      return Premieres.findById(premiere)
         .exec()
-        .then((premier) => {
-          if (!premier || premier.active === false) {
+        .then((premiere) => {
+          if (!premiere || premiere.active === false) {
             return res
               .status(404)
               .json(
