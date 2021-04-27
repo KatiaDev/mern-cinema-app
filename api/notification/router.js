@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Notifications = require("./model");
+const middleware = require("./middleware");
 
 router.get("/", async (req, res, next) => {
-    Notifications.find()
+  Notifications.find()
     .exec()
     .then((notification) => {
       res.status(200).json(notification);
@@ -10,16 +11,20 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:notification_id", async (req, res, next) => {
-    Notifications.findById()
-    .exec()
-    .then((notification) => {
-      res.status(200).json(notification);
-    })
-    .catch(next);
-});
+router.get(
+  "/:notification_id",
+  middleware.checkNotificationExists,
+  async (req, res, next) => {
+    Notifications.findById(req.params.notification_id)
+      .exec()
+      .then((notification) => {
+        res.status(200).json(notification);
+      })
+      .catch(next);
+  }
+);
 
-router.post("/", async (req, res, next) => {
+router.post("/", middleware.validateNewNotification, async (req, res, next) => {
   new Notifications(req.body)
     .save()
     .then((newNotification) => {
@@ -28,23 +33,36 @@ router.post("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:notification_id", async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+router.put(
+  "/:notification_id",
+  middleware.checkNotificationExists,
+  middleware.validateNewNotification,
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
-    return acc;
-  }, {});
+      return acc;
+    }, {});
 
-  Notifications.findByIdAndUpdate(req.params.notification_id, bodyReducer)
-    .exec()
-    .then((updatedNoitification) => {
-      res.status(200).json(updatedNoitification);
-    })
-    .catch(next);
-});
+    Notifications.findByIdAndUpdate(req.params.notification_id, bodyReducer)
+      .exec()
+      .then((updatedNoitification) => {
+        res.status(200).json(updatedNoitification);
+      })
+      .catch(next);
+  }
+);
 
-router.delete("/:notification_id", async (req, res, next) => {
-    Notifications.findByIdAndDelete(req.params.notification_id).exec();
-  res.status(200).json(deletedNotification).catch(next);
-});
+router.delete(
+  "/:notification_id",
+  middleware.checkNotificationExists,
+  async (req, res, next) => {
+    Notifications.findByIdAndDelete(req.params.notification_id)
+      .exec()
+      .then((deletedNotification) => {
+        res.status(200).json(deletedNotification);
+      })
+      .catch(next);
+  }
+);
 
 module.exports = router;

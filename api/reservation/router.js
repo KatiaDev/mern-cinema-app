@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Reservations = require("./model");
+const middleware = require("./middleware");
 
 router.get("/", async (req, res, next) => {
   Reservations.find()
@@ -10,16 +11,20 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:reservation_id", async (req, res, next) => {
-  Reservations.findById()
-    .exec()
-    .then((reservations) => {
-      res.status(200).json(reservations);
-    })
-    .catch(next);
-});
+router.get(
+  "/:reservation_id",
+  middleware.checkReservationExists,
+  async (req, res, next) => {
+    Reservations.findById(req.params.reservation_id)
+      .exec()
+      .then((reservations) => {
+        res.status(200).json(reservations);
+      })
+      .catch(next);
+  }
+);
 
-router.post("/", async (req, res, next) => {
+router.post("/", middleware.validateNewReservation, async (req, res, next) => {
   new Reservations(req.body)
     .save()
     .then((newReservation) => {
@@ -28,25 +33,30 @@ router.post("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:reservation_id", async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    if (
-      (req.body[curr] && curr !== "premiere") ||
-      (req.body[curr] && curr !== "user") ||
-      (req.body[curr] && curr !== "seat")
-    ) {
-      acc[curr] = req.body[curr];
-    }
-    return acc;
-  }, {});
+router.put(
+  "/:reservation_id",
+  middleware.checkReservationExists,
 
-  Reservations.findByIdAndUpdate(req.params.reservation_id, bodyReducer)
-    .exec()
-    .then((updatedReservation) => {
-      res.status(200).json(updatedReservation);
-    })
-    .catch(next);
-});
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+      if (
+        (req.body[curr] && curr !== "premiere") ||
+        (req.body[curr] && curr !== "user") ||
+        (req.body[curr] && curr !== "seat")
+      ) {
+        acc[curr] = req.body[curr];
+      }
+      return acc;
+    }, {});
+
+    Reservations.findByIdAndUpdate(req.params.reservation_id, bodyReducer)
+      .exec()
+      .then((updatedReservation) => {
+        res.status(200).json(updatedReservation);
+      })
+      .catch(next);
+  }
+);
 
 router.delete("/:reservation_id", async (req, res, next) => {
   Reservations.findByIdAndDelete(req.params.reservation_id).exec();
