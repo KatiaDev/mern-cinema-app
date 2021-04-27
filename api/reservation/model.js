@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema(
   {
-    //  608712a3113005679c4b6f3a
-    premier: {
+    premiere: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Premieres",
       require: true,
