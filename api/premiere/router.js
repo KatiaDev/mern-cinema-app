@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Premieres = require("./model");
+const middleware = require("./middleware");
 
 router.get("/", async (req, res, next) => {
   Premieres.find()
@@ -10,16 +11,20 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:premiere_id", async (req, res, next) => {
-  Premieres.findById()
-    .exec()
-    .then((premiere) => {
-      res.status(200).json(premiere);
-    })
-    .catch(next);
-});
+router.get(
+  "/:premiere_id",
+  middleware.checkPremiereExists,
+  async (req, res, next) => {
+    Premieres.findById(req.params.premiere_id)
+      .exec()
+      .then((premiere) => {
+        res.status(200).json(premiere);
+      })
+      .catch(next);
+  }
+);
 
-router.post("/", async (req, res, next) => {
+router.post("/", middleware.validateNewPremiere, async (req, res, next) => {
   new Premieres(req.body)
     .save()
     .then((newPremier) => {
@@ -28,28 +33,44 @@ router.post("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:premiere_id", async (req, res, next) => {
-  const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-    if (
-      (req.body[curr] && curr !== "movie") ||
-      (req.body[curr] && curr !== "cinema")
-    ) {
-      acc[curr] = req.body[curr];
-    }
-    return acc;
-  }, {});
+router.put(
+  "/:premiere_id",
+  middleware.checkPremiereExists,
+  middleware.validateNewPremiere,
+  async (req, res, next) => {
+    const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
+      if (
+        (req.body[curr] && curr !== "movie") ||
+        (req.body[curr] && curr !== "cinema")
+      ) {
+        acc[curr] = req.body[curr];
+      }
+      return acc;
+    }, {});
 
-  Premieres.findByIdAndUpdate(req.params.premiere_id, bodyReducer)
-    .exec()
-    .then((updatedPremier) => {
-      res.status(200).json(updatedPremier);
+    Premieres.findByIdAndUpdate(req.params.premiere_id, bodyReducer)
+      .exec()
+      .then((updatedPremier) => {
+        res.status(200).json(updatedPremier);
+      })
+      .catch(next);
+  }
+);
+
+router.delete(
+  "/:premiere_id",
+  middleware.checkPremiereExists,
+  async (req, res, next) => {
+    Premieres.findOneAndUpdate({
+      _id: req.params.premiere_id,
+      active: false,
     })
-    .catch(next);
-});
-
-router.delete("/:premiere_id", async (req, res, next) => {
-  Premieres.findByIdAndDelete(req.params.premiere_id).exec();
-  res.status(200).json(deletedPremiere).catch(next);
-});
+      .exec()
+      .then((deletedPremiere) => {
+        res.status(200).json(deletedPremiere);
+      })
+      .catch(next);
+  }
+);
 
 module.exports = router;

@@ -17,6 +17,12 @@ const premiereSchema = new mongoose.Schema({
   interval_hours: [],
   price: {
     type: Number,
+    require: true,
+  },
+  active: {
+    type: Boolean,
+    require: true,
+    default: true,
   },
 });
 
