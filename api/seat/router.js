@@ -11,8 +11,13 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:seat_id", checkSeatExists, (req, res, next) => {
-  res.status(200).json(foundSeat);
+router.get("/:seat_id", checkSeatExists, async (req, res, next) => {
+  try {
+    const foundSeat = await Seats.findById(req.params.seat_id).exec();
+    res.status(200).json(foundSeat);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post("/", validateSeat, async (req, res, next) => {
@@ -36,8 +41,8 @@ router.put(
       return acc;
     }, {});
     try {
-      const updatedSeat = await Seats.findByIdAndUpdate(
-        req.params.seat_id,
+      const updatedSeat = await Seats.findOneAndUpdate(
+        { _id: req.params.seat_id },
         bodyReducer
       ).exec();
       res.status(200).json(updatedSeat);

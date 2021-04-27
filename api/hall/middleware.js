@@ -1,10 +1,28 @@
+const { check, validationResult } = require("express-validator");
 const Halls = require("./model");
 
-const validateHall = (req, res, next) => {
-  const { cinema, name, seats_total } = req.body;
+const validateHall = async (req, res, next) => {
+  await check("name")
+    .notEmpty()
+    .withMessage("Name field can't be empty.")
+    .isLength({ min: 5 })
+    .withMessage("Contact must have min length of 5.")
+    .isAlphanumeric()
+    .withMessage("Invalid name.")
+    .run(req);
 
-  if (!cinema || !name || !seats_total) {
-    return res.status(400).json({ message: "Missing required field." });
+  await check("seats_total")
+    .trim()
+    .notEmpty()
+    .withMessage("Seats field can't be empty.")
+    .isNumeric()
+    .withMessage("Invalid value type. Must be Numeric value.")
+    .run(req);
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(400).json({ error: errors.array() });
   } else {
     next();
   }

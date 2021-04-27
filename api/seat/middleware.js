@@ -1,10 +1,41 @@
+const { check, validationResult } = require("express-validator");
 const Seats = require("./model");
 
-const validateSeat = (req, res, next) => {
-  const { hall, seat_num, row_num, seat_type, seat_status } = req.body;
+const validateSeat = async (req, res, next) => {
+  await check("seat_num")
+    .trim()
+    .notEmpty()
+    .withMessage("Seat number field can't be empty.")
+    .isNumeric()
+    .withMessage("Invalid value type. Must be Numeric value.")
+    .run(req);
 
-  if (!hall || !seat_num || !row_num || !seat_type || !seat_status) {
-    return res.status(400).json({ message: "Missing required field." });
+  await check("row_num")
+    .trim()
+    .notEmpty()
+    .withMessage("Row number field can't be empty.")
+    .isNumeric()
+    .withMessage("Invalid value type. Must be Numeric value.")
+    .run(req);
+
+  await check("seat_type")
+    .notEmpty()
+    .withMessage("Seat type field can't be empty.")
+    .isIn(["Platou", "Premium", "Balcon", "Logie Stanga", "Logie Dreapta"])
+    .withMessage("Invalid seat type.")
+    .run(req);
+
+  await check("seat_price")
+    .notEmpty()
+    .withMessage("Seat price field can't be empty.")
+    .isDecimal()
+    .withMessage("Invalid value type. Must be decimal value.")
+    .run(req);
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(400).json({ error: errors.array() });
   } else {
     next();
   }

@@ -13,7 +13,12 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:hall_id", checkHallExists, async (req, res, next) => {
-  res.status(200).json(foundHall);
+  try {
+    const foundHall = await Halls.findById(req.params.hall_id).exec();
+    res.status(200).json(foundHall);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post("/", validateHall, async (req, res, next) => {
@@ -37,8 +42,8 @@ router.put(
       return acc;
     }, {});
     try {
-      const updatedHall = await Halls.findByIdAndUpdate(
-        req.params.hall_id,
+      const updatedHall = await Halls.findOneAndUpdate(
+        { _id: req.params.hall_id },
         bodyReducer
       ).exec();
       res.status(200).json(updatedHall);
