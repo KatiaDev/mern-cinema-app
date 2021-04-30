@@ -14,7 +14,7 @@ const premiereRouter = require("./premiere/router");
 const reservationRouter = require("./reservation/router");
 const ticketRouter = require("./ticket/router");
 const userRouter = require("./user/router");
-const imageRouter = require("../cloudinary/router");
+const mediaRouter = require("../cloudinary/router");
 const notificationRouter = require("./notification/router");
 
 const connectDB = async () => {
@@ -35,7 +35,6 @@ connectDB();
 server.use(express.json());
 mongoose.set("useCreateIndex", true);
 mongoose.set("useFindAndModify", false);
-
 
 if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.warn("!! cloudinary config is undefined !!");
@@ -58,7 +57,7 @@ server.use("/api/reservations", reservationRouter);
 server.use("/api/tickets", ticketRouter);
 server.use("/api/users", userRouter);
 server.use("/api/notifications", notificationRouter);
-server.use(imageRouter);
+server.use(mediaRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>Welcome to Olymp Cinema !</h1>`);

@@ -46,7 +46,7 @@ router.put(
     }, {});
     Movies.findByIdAndUpdate(req.params.movie_id, bodyReducer)
       .exec()
-      .then(() => {
+      .then((updatedMovie) => {
         res.status(200).json(updatedMovie);
       })
       .catch(next);
@@ -98,7 +98,7 @@ router.post("/", validateMovie, async (req, res, next) => {
 });
 
 router.delete("/:movie_id", checkMovieExists, async (req, res, next) => {
-  Movies.findByIdAndDelete(req.params.movie_id, { activ: false })
+  Movies.findByIdAndDelete(req.params.movie_id)
     .exec()
     .then((removeMovie) => {
       res.status(200).json(removeMovie);

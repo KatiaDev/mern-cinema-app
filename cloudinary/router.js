@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 // *** image upload ***
 
-router.post("/upload-image", async (req, res) => {
+router.post("/api/image", async (req, res) => {
   const data = {
     image: req.body.image,
   };
@@ -26,7 +26,7 @@ router.post("/upload-image", async (req, res) => {
 
 // *** video upload ***
 
-router.post("/upload-video", async (req, res) => {
+router.post("/api/video", async (req, res) => {
   const data = {
     video: req.body.video,
   };
@@ -52,7 +52,7 @@ router.post("/upload-video", async (req, res) => {
 
 // *** display image ***
 
-router.get("/get-image/:id", async (req, res) => {
+router.get("/api/image/:id", async (req, res) => {
   try {
     const foundImage = await cloudinary.image(req.params.id, {
       width: 150,
@@ -71,7 +71,7 @@ router.get("/get-image/:id", async (req, res) => {
 
 // *** play video ***
 
-router.get("/get-video/:id", async (req, res) => {
+router.get("/api/video/:id", async (req, res) => {
   try {
     const foundVideo = await cloudinary.video(req.params.id, {
       controls: true,
@@ -87,7 +87,7 @@ router.get("/get-video/:id", async (req, res) => {
 
 // *** delete image ***
 
-router.delete("/delete-image/:id", async (req, res) => {
+router.delete("/api/image/:id", async (req, res) => {
   cloudinary.uploader
     .destroy(req.params.id)
     .then((result) => {
@@ -106,7 +106,7 @@ router.delete("/delete-image/:id", async (req, res) => {
 
 // *** delete video ***
 
-router.delete("/delete-video/:id", async (req, res) => {
+router.delete("/api/video/:id", async (req, res) => {
   cloudinary.uploader
     .destroy(req.params.id, { resource_type: "video" })
     .then((result) => {

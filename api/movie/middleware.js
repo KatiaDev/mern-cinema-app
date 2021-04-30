@@ -6,11 +6,9 @@ const validateMovie = async (req, res, next) => {
   await check("title")
     .trim()
     .notEmpty()
-    .withMessage("Movie field can't be empty.")
+    .withMessage("Movie title field can't be empty.")
     .isLength({ min: 3 })
-    .withMessage("Contact must have minimum length of 3.")
-    .isAlphanumeric()
-    .withMessage("Invalid title. Must contain alphanumeric characters.")
+    .withMessage("Movie title must have minimum length of 3.")
     .run(req);
 
   await check("genre")
@@ -28,7 +26,7 @@ const validateMovie = async (req, res, next) => {
     .withMessage("Release date field can't be empty.")
     .isISO8601()
     .toDate()
-    .withMessage("Wrong date format")
+    .withMessage("Wrong date format.")
     .run(req);
 
     await check("description")
