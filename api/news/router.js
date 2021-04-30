@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const News = require("./model");
+const cloudinary = require("cloudinary").v2;
 const { validateNews, checkNewsExists } = require("./middleware");
 
 router.get("/", async (req, res, next) => {
@@ -11,17 +12,34 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:news_id", checkNewsExists, (req, res, next) => {
-  res.status(200).json(foundArticle);
-});
-
-router.post("/", validateNews, async (req, res, next) => {
+router.get("/:news_id", checkNewsExists, async (req, res, next) => {
   try {
-    const newArticle = await new News(req.body).save();
-    res.status(201).json(newArticle);
+    const foundArticle = await News.findById(req, params.news_id).exec();
+    res.status(200).json(foundArticle);
   } catch (err) {
     next(err);
   }
+});
+
+router.post("/", validateNews, async (req, res, next) => {
+  const { image_url } = req.body;
+
+  cloudinary.uploader
+    .upload(image_url, {
+      folder: "news",
+      use_filename: true,
+    })
+    .then((result) => {
+      console.log("image:", result);
+
+      new News({ ...req.body, image_url: result.secure_url })
+        .save()
+        .then((newArticle) => {
+          res.status(201).json(newArticle);
+        })
+        .catch(next);
+    })
+    .catch(next);
 });
 
 router.put(
