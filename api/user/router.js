@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Users = require("./model");
-const middleware = require("./middleware");
+const { validateNewUser, checkUserExists } = require("./middleware");
+const { registeredAcces, staffAcces } = require("../auth/middleware");
 
-router.get("/", async (req, res, next) => {
+router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Users.find()
     .exec()
     .then((user) => {
@@ -11,19 +12,25 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:user_id", middleware.checkUserExists, async (req, res, next) => {
-  Users.findById(req.params.user_id)
-    .exec()
-    .then((user) => {
-      res.status(200).json(user);
-    })
-    .catch(next);
-});
+router.get(
+  "/:user_id",
+  registeredAcces,
+  checkUserExists,
+  async (req, res, next) => {
+    Users.findById(req.params.user_id)
+      .exec()
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch(next);
+  }
+);
 
 router.put(
   "/:user_id",
-  middleware.validateNewUser,
-  middleware.checkUserExists,
+  registeredAcces,
+  validateNewUser,
+  checkUserExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -38,18 +45,10 @@ router.put(
   }
 );
 
-router.post("/", middleware.validateNewUser, async (req, res, next) => {
-  new Users(req.body)
-    .save()
-    .then((newUser) => {
-      res.status(200).json(newUser);
-    })
-    .catch(next);
-});
-
 router.delete(
   "/:user_id",
-  middleware.checkUserExists,
+  registeredAcces,
+  checkUserExists,
   async (req, res, next) => {
     Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
       .exec()
