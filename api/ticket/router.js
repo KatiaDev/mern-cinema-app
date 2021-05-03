@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Tickets = require("./model");
-const middleware = require("./middleware");
+const { checkTicketExists, validateNewTicket } = require("./middleware");
+const { registeredAcces, staffAcces } = require("../auth/middleware");
 
-router.get("/", async (req, res, next) => {
+router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Tickets.find()
     .exec()
     .then((ticket) => {
@@ -13,7 +14,9 @@ router.get("/", async (req, res, next) => {
 
 router.get(
   "/:ticket_id",
-  middleware.checkTicketExists,
+  checkTicketExists,
+  registeredAcces,
+  staffAcces,
   async (req, res, next) => {
     Tickets.findById(req.params.ticket_id)
       .exec()
@@ -26,8 +29,10 @@ router.get(
 
 router.put(
   "/:ticket_id",
-  middleware.validateNewTicket,
-  middleware.checkTicketExists,
+  registeredAcces,
+  staffAcces,
+  validateNewTicket,
+  checkTicketExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (
@@ -49,7 +54,7 @@ router.put(
   }
 );
 
-router.post("/", middleware.validateNewTicket, async (req, res, next) => {
+router.post("/", validateNewTicket, registeredAcces, async (req, res, next) => {
   new Tickets(req.body)
     .save()
     .then((newTicket) => {
@@ -60,7 +65,9 @@ router.post("/", middleware.validateNewTicket, async (req, res, next) => {
 
 router.delete(
   "/:ticket_id",
-  middleware.checkTicketExists,
+  checkTicketExists,
+  registeredAcces,
+  staffAcces,
   async (req, res, next) => {
     Tickets.findByIdAndDelete(req.params.ticket_id).exec();
     res.status(200).json(deletedTicket).catch(next);

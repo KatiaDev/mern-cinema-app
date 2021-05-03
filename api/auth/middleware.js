@@ -68,8 +68,18 @@ const checkUserRegister = async (req, res, next) => {
   next();
 };
 
+const validateUserIdentity = async (req, res, next) => {
+  console.log("Decoded", req.decoded);
+  console.log("Params", req.params.user_id);
+  if (req.decoded._id !== req.params.user_id) {
+    return res.status(403).json("No privileges for resource access");
+  }
+  next();
+};
+
 module.exports = {
   registeredAcces,
   checkUserRegister,
   staffAcces,
+  validateUserIdentity,
 };

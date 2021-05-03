@@ -1,7 +1,11 @@
 const router = require("express").Router();
 const Users = require("./model");
 const { validateNewUser, checkUserExists } = require("./middleware");
-const { registeredAcces, staffAcces } = require("../auth/middleware");
+const {
+  registeredAcces,
+  staffAcces,
+  validateUserIdentity,
+} = require("../auth/middleware");
 
 router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Users.find()
@@ -15,6 +19,7 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 router.get(
   "/:user_id",
   registeredAcces,
+  validateUserIdentity,
   checkUserExists,
   async (req, res, next) => {
     Users.findById(req.params.user_id)
@@ -31,6 +36,7 @@ router.put(
   registeredAcces,
   validateNewUser,
   checkUserExists,
+  validateUserIdentity,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -49,6 +55,7 @@ router.delete(
   "/:user_id",
   registeredAcces,
   checkUserExists,
+  validateUserIdentity,
   async (req, res, next) => {
     Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
       .exec()
