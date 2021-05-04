@@ -42,7 +42,7 @@ router.post("/", middleware.validateNewUser, async (req, res, next) => {
   new Users(req.body)
     .save()
     .then((newUser) => {
-      res.status(200).json(newUser);
+      res.status(201).json(newUser);
     })
     .catch(next);
 });
