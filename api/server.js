@@ -1,10 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const server = express();
 const cloudinary = require("cloudinary").v2;
-
 const movieRouter = require("./movie/router");
 const cinemaRouter = require("./cinema/router");
 const newsRouter = require("./news/router");
@@ -16,6 +14,8 @@ const ticketRouter = require("./ticket/router");
 const userRouter = require("./user/router");
 const mediaRouter = require("../cloudinary/router");
 const notificationRouter = require("./notification/router");
+const authRouter = require("./auth/router");
+const cookieParser = require("cookie-parser");
 
 const connectDB = async () => {
   try {
@@ -24,6 +24,8 @@ const connectDB = async () => {
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: true,
       }
     );
     console.log("MongoDB connected!");
@@ -32,9 +34,6 @@ const connectDB = async () => {
   }
 };
 connectDB();
-server.use(express.json());
-mongoose.set("useCreateIndex", true);
-mongoose.set("useFindAndModify", false);
 
 if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.warn("!! cloudinary config is undefined !!");
@@ -43,10 +42,14 @@ if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.log("cloudinary config:");
   console.log(cloudinary.config());
 }
-
-//server.use(express.json());
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
+server.use(cookieParser());
+server.use(express.json());
+server.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+server.use("/api/auth", authRouter);
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
 server.use("/api/news", newsRouter);

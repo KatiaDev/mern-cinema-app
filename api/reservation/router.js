@@ -1,8 +1,16 @@
 const router = require("express").Router();
 const Reservations = require("./model");
-const middleware = require("./middleware");
+const {
+  checkReservationExists,
+  validateNewReservation,
+} = require("./middleware");
+const {
+  registeredAcces,
+  staffAcces,
+  validateUserIdentity,
+} = require("../auth/middleware");
 
-router.get("/", async (req, res, next) => {
+router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Reservations.find()
     .exec()
     .then((reservations) => {
@@ -13,9 +21,25 @@ router.get("/", async (req, res, next) => {
 
 router.get(
   "/:reservation_id",
-  middleware.checkReservationExists,
+  checkReservationExists,
+  registeredAcces,
+  staffAcces,
   async (req, res, next) => {
+    console.log("A intrat in reservation_id");
     Reservations.findById(req.params.reservation_id)
+      .exec()
+      .then((reservation) => {
+        res.status(200).json(reservation);
+      })
+      .catch(next);
+  }
+);
+router.get(
+  "/:user_id/reservations",
+  registeredAcces,
+  validateUserIdentity,
+  async (req, res, next) => {
+    Reservations.find({ parent_user: req.params.user_id })
       .exec()
       .then((reservations) => {
         res.status(200).json(reservations);
@@ -24,18 +48,42 @@ router.get(
   }
 );
 
-router.post("/", middleware.validateNewReservation, async (req, res, next) => {
-  new Reservations(req.body)
-    .save()
-    .then((newReservation) => {
-      res.status(200).json(newReservation);
+router.get(
+  "/:user_id/:reservation_id",
+  checkReservationExists,
+  registeredAcces,
+  validateUserIdentity,
+  async (req, res, next) => {
+    Reservations.findOne({
+      parent_user: req.params.user_id,
+      _id: req.params.reservation_id,
     })
-    .catch(next);
-});
+      .exec()
+      .then((reservation) => {
+        res.status(200).json(reservation);
+      })
+      .catch(next);
+  }
+);
+
+router.post(
+  "/",
+  validateNewReservation,
+  registeredAcces,
+  async (req, res, next) => {
+    new Reservations(req.body)
+      .save()
+      .then((newReservation) => {
+        res.status(200).json(newReservation);
+      })
+      .catch(next);
+  }
+);
 
 router.put(
   "/:reservation_id",
-  middleware.checkReservationExists,
+  checkReservationExists,
+  registeredAcces,
 
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
@@ -58,7 +106,7 @@ router.put(
   }
 );
 
-router.delete("/:reservation_id", async (req, res, next) => {
+router.delete("/:reservation_id", registeredAcces, async (req, res, next) => {
   Reservations.findByIdAndDelete(req.params.reservation_id).exec();
   res.status(200).json(deletedReservation).catch(next);
 });
