@@ -47,11 +47,12 @@ const checkUserRegister = async (req, res, next) => {
 
   await Users.findOne({
     email: req.body.email,
-    activ: true,
+    active: true,
   })
     .exec()
     .then((user) => {
       if (user) {
+        console.log("Este", user);
         req.user = user;
       } else {
         return res
