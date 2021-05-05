@@ -23,14 +23,14 @@ router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
 
 router.post(
   "/",
-  validateNewPremiere,
   registeredAcces,
   staffAcces,
+  validateNewPremiere,
   async (req, res, next) => {
     new Premieres(req.body)
       .save()
-      .then((newPremier) => {
-        res.status(200).json(newPremier);
+      .then((newPremiere) => {
+        res.status(201).json(newPremiere);
       })
       .catch(next);
   }
@@ -38,10 +38,10 @@ router.post(
 
 router.put(
   "/:premiere_id",
-  checkPremiereExists,
-  validateNewPremiere,
   registeredAcces,
   staffAcces,
+  validateNewPremiere,
+  checkPremiereExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (
@@ -55,8 +55,8 @@ router.put(
 
     Premieres.findByIdAndUpdate(req.params.premiere_id, bodyReducer)
       .exec()
-      .then((updatedPremier) => {
-        res.status(200).json(updatedPremier);
+      .then((updatedPremiere) => {
+        res.status(200).json(updatedPremiere);
       })
       .catch(next);
   }
@@ -64,9 +64,9 @@ router.put(
 
 router.delete(
   "/:premiere_id",
-  checkPremiereExists,
   registeredAcces,
   staffAcces,
+  checkPremiereExists,
   async (req, res, next) => {
     Premieres.findOneAndUpdate({
       _id: req.params.premiere_id,

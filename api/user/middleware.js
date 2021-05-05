@@ -35,14 +35,14 @@ const validateNewUser = async (req, res, next) => {
     .matches(/\d/)
     .withMessage("your password should have at least one number")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
-    .withMessage("your password should have at least one sepcial character")
+    .withMessage("your password should have at least one special character")
     .trim()
     .run(req);
 
   await check("email")
     .isEmail()
     .normalizeEmail()
-    .withMessage("the specified mail does not match the rules")
+    .withMessage("the specified email does not match the rules")
     .trim()
     .custom((email) => {
       return Users.find({

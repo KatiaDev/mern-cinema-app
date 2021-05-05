@@ -26,8 +26,8 @@ router.post("/register", validateNewUser, async (req, res, next) => {
     mobile,
   })
     .save()
-    .then((addUser) => {
-      res.status(200).json(addUser);
+    .then((addedUser) => {
+      res.status(200).json(addedUser);
     })
     .catch(next);
 });
@@ -37,7 +37,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
   const passwordValid = await bcrypt.compare(req.body.password, password);
   if (!passwordValid) {
     return res.status(401).json("Invalid credentials");
-  } 
+  }
 
   const token = jwt.sign(
     {
@@ -59,7 +59,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
 router.get("/logout", async (req, res, next) => {
   try {
     res.clearCookie("token");
-    return res.status(200).json("logout succesful !!!");
+    return res.status(200).json("Logout successful !!!");
   } catch (error) {
     next();
   }

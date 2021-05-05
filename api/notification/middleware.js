@@ -20,7 +20,7 @@ const validateNewNotification = async (req, res, next) => {
   await check("notification_type")
     .trim()
     .notEmpty()
-    .withMessage("Notification types is required")
+    .withMessage("Notification type is required")
     .isString()
     .withMessage("Type error for notification")
     .run(req);
@@ -35,18 +35,14 @@ const validateNewNotification = async (req, res, next) => {
 };
 
 const checkNotificationExists = async (req, res, next) => {
-  await check("notification_id")
-    .custom((notification) => {
-      return Notifications.findById(notification)
-        .then((notification) => {
-          if (!notification) {
-            return res.status(404).json("Notification is not found ");
-          }
-        })
-        .catch(next);
+  Notifications.findById(req.params.notification_id)
+    .then((notification) => {
+      if (!notification) {
+        return res.status(404).json("Notification is not found ");
+      }
+      next();
     })
-    .run(req);
-  next();
+    .catch(next);
 };
 
 module.exports = {

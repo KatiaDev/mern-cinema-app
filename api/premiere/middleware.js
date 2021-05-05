@@ -62,20 +62,14 @@ const validateNewPremiere = async (req, res, next) => {
 };
 
 const checkPremiereExists = async (req, res, next) => {
-
-  await check("premiere_id")
-    .custom((premiere) => {
-      return Premieres.findOne({ _id: req.params.premiere_id, active: true })
-        .then((premiere) => {
-          if (!premiere) {
-            return res.status(404).json(" Premiere is not found ");
-          }
-        })
-        .catch(next);
+  Premieres.findOne({ _id: req.params.premiere_id, active: true })
+    .then((premiere) => {
+      if (!premiere) {
+        return res.status(404).json(" Premiere is not found ");
+      }
+      next();
     })
-    .run(req);
-
-  next();
+    .catch(next);
 };
 
 module.exports = {

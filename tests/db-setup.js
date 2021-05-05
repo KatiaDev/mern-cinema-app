@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 mongoose.set("useCreateIndex", true);
 mongoose.promise = global.Promise;
 
@@ -47,4 +47,4 @@ module.exports = {
       await mongoose.connection.close();
     });
   },
-};
+};*/

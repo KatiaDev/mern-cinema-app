@@ -12,12 +12,7 @@
   "author": "cebotari-marin, popa-ecaterina",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
-    "@shelf/jest-mongodb": "^1.2.4",
-    "body-parser": "^1.19.0",
-=======
     "bcrypt": "^5.0.1",
->>>>>>> 4f86a2cde27d34b8161d0f4a47dbf9e487c5025e
     "cloudinary": "^1.25.1",
     "cookie-parser": "^1.4.5",
     "ejs": "^3.1.6",

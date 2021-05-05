@@ -1,9 +1,9 @@
 const supertest = require("supertest");
 const server = require("../api/server");
-const { setupDB } = require("./db-setup");
-const cinemaModel = require("../api/cinema/model");
+//const { setupDB } = require("./db-setup");
+//const cinemaModel = require("../api/cinema/model");
 
-setupDB("test");
+//setupDB("test");
 
 describe("cinema", () => {
   describe("[POST] /api/cinemas", () => {

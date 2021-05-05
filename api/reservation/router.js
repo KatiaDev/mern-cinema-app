@@ -21,9 +21,9 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 
 router.get(
   "/:reservation_id",
-  checkReservationExists,
   registeredAcces,
   staffAcces,
+  checkReservationExists,
   async (req, res, next) => {
     console.log("A intrat in reservation_id");
     Reservations.findById(req.params.reservation_id)
@@ -50,9 +50,9 @@ router.get(
 
 router.get(
   "/:user_id/:reservation_id",
-  checkReservationExists,
   registeredAcces,
   validateUserIdentity,
+  checkReservationExists,
   async (req, res, next) => {
     Reservations.findOne({
       parent_user: req.params.user_id,
@@ -68,13 +68,13 @@ router.get(
 
 router.post(
   "/",
-  validateNewReservation,
   registeredAcces,
+  validateNewReservation,
   async (req, res, next) => {
     new Reservations(req.body)
       .save()
       .then((newReservation) => {
-        res.status(200).json(newReservation);
+        res.status(201).json(newReservation);
       })
       .catch(next);
   }
@@ -82,14 +82,14 @@ router.post(
 
 router.put(
   "/:reservation_id",
-  checkReservationExists,
   registeredAcces,
-
+  validateNewReservation,
+  checkReservationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (
         (req.body[curr] && curr !== "premiere") ||
-        (req.body[curr] && curr !== "user") ||
+        (req.body[curr] && curr !== "parent_user") ||
         (req.body[curr] && curr !== "seat")
       ) {
         acc[curr] = req.body[curr];
@@ -106,9 +106,18 @@ router.put(
   }
 );
 
-router.delete("/:reservation_id", registeredAcces, async (req, res, next) => {
-  Reservations.findByIdAndDelete(req.params.reservation_id).exec();
-  res.status(200).json(deletedReservation).catch(next);
-});
+router.delete(
+  "/:reservation_id",
+  registeredAcces,
+  checkReservationExists,
+  async (req, res, next) => {
+    Reservations.findByIdAndDelete(req.params.reservation_id)
+      .exec()
+      .then((deletedReservation) => {
+        res.status(200).json(deletedReservation);
+      })
+      .catch(next);
+  }
+);
 
 module.exports = router;

@@ -15,17 +15,17 @@ const { checkUserExists } = require("../user/middleware");
 router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Notifications.find()
     .exec()
-    .then((notification) => {
-      res.status(200).json(notification);
+    .then((notifications) => {
+      res.status(200).json(notifications);
     })
     .catch(next);
 });
 
 router.get(
   "/:notification_id",
-  checkNotificationExists,
   registeredAcces,
   staffAcces,
+  checkNotificationExists,
   async (req, res, next) => {
     Notifications.findById(req.params.notification_id)
       .exec()
@@ -48,9 +48,7 @@ router.get(
     //   return el._id === req.params.user_id;
     // });
 
-    
-
-    Notifications.findOne({ _id: req.params.notification_id})
+    Notifications.findOne({ _id: req.params.notification_id })
       .exec()
       .then((notification) => {
         res.status(200).json(notification);
@@ -90,7 +88,7 @@ router.post(
     new Notifications(req.body)
       .save()
       .then((newNotification) => {
-        res.status(200).json(newNotification);
+        res.status(201).json(newNotification);
       })
       .catch(next);
   }
@@ -98,10 +96,10 @@ router.post(
 
 router.put(
   "/:notification_id",
-  checkNotificationExists,
-  validateNewNotification,
   registeredAcces,
   staffAcces,
+  validateNewNotification,
+  checkNotificationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -110,8 +108,8 @@ router.put(
 
     Notifications.findByIdAndUpdate(req.params.notification_id, bodyReducer)
       .exec()
-      .then((updatedNoitification) => {
-        res.status(200).json(updatedNoitification);
+      .then((updatedNotification) => {
+        res.status(200).json(updatedNotification);
       })
       .catch(next);
   }
@@ -119,9 +117,9 @@ router.put(
 
 router.delete(
   "/:notification_id",
-  checkNotificationExists,
   registeredAcces,
   staffAcces,
+  checkNotificationExists,
   async (req, res, next) => {
     Notifications.findByIdAndDelete(req.params.notification_id)
       .exec()

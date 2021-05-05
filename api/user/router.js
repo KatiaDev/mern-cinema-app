@@ -10,8 +10,8 @@ const {
 router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Users.find()
     .exec()
-    .then((user) => {
-      res.status(200).json(user);
+    .then((users) => {
+      res.status(200).json(users);
     })
     .catch(next);
 });
@@ -34,9 +34,9 @@ router.get(
 router.put(
   "/:user_id",
   registeredAcces,
+  validateUserIdentity,
   validateNewUser,
   checkUserExists,
-  validateUserIdentity,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -51,28 +51,16 @@ router.put(
   }
 );
 
-<<<<<<< HEAD
-router.post("/", middleware.validateNewUser, async (req, res, next) => {
-  new Users(req.body)
-    .save()
-    .then((newUser) => {
-      res.status(201).json(newUser);
-    })
-    .catch(next);
-});
-
-=======
->>>>>>> 4f86a2cde27d34b8161d0f4a47dbf9e487c5025e
 router.delete(
   "/:user_id",
   registeredAcces,
-  checkUserExists,
   validateUserIdentity,
+  checkUserExists,
   async (req, res, next) => {
     Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
       .exec()
-      .then((removeUser) => {
-        res.status(200).json(removeUser);
+      .then((removedUser) => {
+        res.status(200).json(removedUser);
       })
       .catch(next);
   }
