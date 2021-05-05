@@ -12,7 +12,7 @@ const registeredAcces = async (req, res, next) => {
     if (err) {
       return res
         .status(401)
-        .json({ message: 'Token invalid, please SingIn !!!" ' });
+        .json({ message: "Token invalid, please SingIn !!!" });
     }
     req.decoded = decoded;
     next();
@@ -47,11 +47,12 @@ const checkUserRegister = async (req, res, next) => {
 
   await Users.findOne({
     email: req.body.email,
-    activ: true,
+    active: true,
   })
     .exec()
     .then((user) => {
       if (user) {
+        console.log("Este", user);
         req.user = user;
       } else {
         return res
