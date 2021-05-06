@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const Seats = require("./model");
 const { validateSeat, checkSeatExists } = require("./middleware");
-const { registeredAcces, staffAcces } = require("../auth/middleware");
+const { registeredAccess, staffAccess } = require("../auth/middleware");
 
-router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
+router.get("/", staffAccess, async (req, res, next) => {
   try {
     const seats = await Seats.find().exec();
     res.status(200).json(seats);
@@ -14,35 +14,32 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 
 router.get(
   "/:seat_id",
+  registeredAccess,
   checkSeatExists,
-  registeredAcces,
-  staffAcces,
-  (req, res, next) => {
-    res.status(200).json(foundSeat);
-  }
-);
-
-router.post(
-  "/",
-  validateSeat,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
     try {
-      const newSeat = await new Seats(req.body).save();
-      res.status(201).json(newSeat);
+      const foundSeat = await Seats.findById(req.params.seat_id).exec();
+      res.status(200).json(foundSeat);
     } catch (err) {
       next(err);
     }
   }
 );
 
+router.post("/", staffAccess, validateSeat, async (req, res, next) => {
+  try {
+    const newSeat = await new Seats(req.body).save();
+    res.status(201).json(newSeat);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.put(
   "/:seat_id",
+  staffAccess,
   validateSeat,
   checkSeatExists,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (req.body[curr] && curr !== "hall") {
@@ -51,7 +48,7 @@ router.put(
       return acc;
     }, {});
     try {
-      const updatedSeat = await Seats.findOneAndUpdate(
+      const updatedSeat = await Seats.findByIdAndUpdate(
         { _id: req.params.seat_id },
         bodyReducer
       ).exec();
@@ -64,9 +61,8 @@ router.put(
 
 router.delete(
   "/:seat_id",
+  staffAccess,
   checkSeatExists,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
     try {
       const deletedSeat = await Seats.findByIdAndDelete(

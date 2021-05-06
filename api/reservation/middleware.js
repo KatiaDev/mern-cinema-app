@@ -8,7 +8,7 @@ const validateNewReservation = async (req, res, next) => {
   await check("premiere")
     .trim()
     .notEmpty()
-    .withMessage("Premiere movie is required")
+    .withMessage("Premiere movie is required.")
     .custom((premiere) => {
       return Premieres.findOne({ premiere })
         .exec()
@@ -17,7 +17,7 @@ const validateNewReservation = async (req, res, next) => {
             return res
               .status(404)
               .json(
-                "The premiere of the selected movie is currently unavailable"
+                "The premiere of the selected movie is currently unavailable."
               );
           }
         })
@@ -28,7 +28,7 @@ const validateNewReservation = async (req, res, next) => {
   await check("seat")
     .trim()
     .notEmpty()
-    .withMessage("Seat is required")
+    .withMessage("Seat is required.")
     .custom((seat) => {
       return Seats.findOne({ seat })
         .exec()
@@ -44,13 +44,13 @@ const validateNewReservation = async (req, res, next) => {
   await check("parent_user")
     .trim()
     .notEmpty()
-    .withMessage("User is required for reservation")
+    .withMessage("User is required for reservation.")
     .custom((user) => {
       return Users.findOne({ user })
         .exec()
         .then((user) => {
           if (!user || user.active == false) {
-            return res.status(404).json("User does not exist");
+            return res.status(404).json("User does not exist.");
           }
         })
         .catch(next);
@@ -60,33 +60,42 @@ const validateNewReservation = async (req, res, next) => {
   await check("reserv_date")
     .trim()
     .notEmpty()
-    .withMessage("Date reservation is required")
+    .withMessage("Date reservation is required.")
     .isISO8601()
     .toDate()
-    .withMessage("Wrong date format")
+    .withMessage("Wrong date format.")
     .run(req);
 
   await check("total_price")
     .trim()
     .notEmpty()
-    .withMessage("Total price is required")
+    .withMessage("Total price is required.")
     .isNumeric()
-    .withMessage("Unknown format")
+    .withMessage("Unknown format.")
+    .run(req);
+
+  await check("user_type")
+    .trim()
+    .notEmpty()
+    .withMessage("User type price is required.")
+    .isIn(["copil", "minor", "adult"])
+    .withMessage("Undefined user type.")
     .run(req);
 
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
+    return res.status(400).json({ error: errors.array() });
+  } else {
+    next();
   }
-  next();
 };
 
 const checkReservationExists = async (req, res, next) => {
   Reservations.findById(req.params.reservation_id)
     .then((reservation) => {
       if (!reservation) {
-        return res.status(404).json("Reservation is not found ");
+        return res.status(404).json("Reservation is not found.");
       }
       next();
     })

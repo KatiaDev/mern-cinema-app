@@ -5,12 +5,12 @@ const {
   validateNewReservation,
 } = require("./middleware");
 const {
-  registeredAcces,
-  staffAcces,
+  registeredAccess,
+  staffAccess,
   validateUserIdentity,
 } = require("../auth/middleware");
 
-router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
+router.get("/", staffAccess, async (req, res, next) => {
   Reservations.find()
     .exec()
     .then((reservations) => {
@@ -21,8 +21,7 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 
 router.get(
   "/:reservation_id",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
   checkReservationExists,
   async (req, res, next) => {
     console.log("A intrat in reservation_id");
@@ -36,7 +35,7 @@ router.get(
 );
 router.get(
   "/:user_id/reservations",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   async (req, res, next) => {
     Reservations.find({ parent_user: req.params.user_id })
@@ -50,7 +49,7 @@ router.get(
 
 router.get(
   "/:user_id/:reservation_id",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   checkReservationExists,
   async (req, res, next) => {
@@ -68,7 +67,7 @@ router.get(
 
 router.post(
   "/",
-  registeredAcces,
+  registeredAccess,
   validateNewReservation,
   async (req, res, next) => {
     new Reservations(req.body)
@@ -82,7 +81,7 @@ router.post(
 
 router.put(
   "/:reservation_id",
-  registeredAcces,
+  registeredAccess,
   validateNewReservation,
   checkReservationExists,
   async (req, res, next) => {
@@ -108,7 +107,7 @@ router.put(
 
 router.delete(
   "/:reservation_id",
-  registeredAcces,
+  registeredAccess,
   checkReservationExists,
   async (req, res, next) => {
     Reservations.findByIdAndDelete(req.params.reservation_id)

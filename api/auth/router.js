@@ -27,7 +27,7 @@ router.post("/register", validateNewUser, async (req, res, next) => {
   })
     .save()
     .then((addedUser) => {
-      res.status(200).json(addedUser);
+      res.status(201).json(addedUser);
     })
     .catch(next);
 });
@@ -36,7 +36,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
   const { _id, email, username, password, role } = req.user;
   const passwordValid = await bcrypt.compare(req.body.password, password);
   if (!passwordValid) {
-    return res.status(401).json("Invalid credentials");
+    return res.status(401).json("Invalid credentials.");
   }
 
   const token = jwt.sign(
@@ -53,7 +53,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
   );
   res.cookie("token", token);
 
-  return res.status(200).json("SingIn Succesful, welcome to Olymp Cinema !!!");
+  return res.status(200).json("SignIn Successful, Welcome to Olymp Cinema !!!");
 });
 
 router.get("/logout", async (req, res, next) => {

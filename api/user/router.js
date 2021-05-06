@@ -2,12 +2,12 @@ const router = require("express").Router();
 const Users = require("./model");
 const { validateUserOnChange, checkUserExists } = require("./middleware");
 const {
-  registeredAcces,
-  staffAcces,
+  registeredAccess,
+  staffAccess,
   validateUserIdentity,
 } = require("../auth/middleware");
 
-router.get("/", staffAcces, async (req, res, next) => {
+router.get("/", staffAccess, async (req, res, next) => {
   Users.find()
     .exec()
     .then((users) => {
@@ -18,7 +18,7 @@ router.get("/", staffAcces, async (req, res, next) => {
 
 router.get(
   "/:user_id",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   checkUserExists,
   async (req, res, next) => {
@@ -33,13 +33,19 @@ router.get(
 
 router.put(
   "/:user_id",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   validateUserOnChange,
   checkUserExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-      acc[curr] = req.body[curr];
+      if (
+        (req.body[curr] && curr !== "password") ||
+        (req.body[curr] && curr !== "role") ||
+        (req.body[curr] && curr !== "active")
+      ) {
+        acc[curr] = req.body[curr];
+      }
       return acc;
     }, {});
     Users.findByIdAndUpdate(req.params.user_id, bodyReducer)
@@ -53,7 +59,7 @@ router.put(
 
 router.delete(
   "/:user_id",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   checkUserExists,
   async (req, res, next) => {
@@ -68,7 +74,7 @@ router.delete(
 
 ////////////////////////////////// DELETE ALL USERS WITH active: false /////////////////////////////////////
 
-router.delete("/", staffAcces, async (req, res, next) => {
+router.delete("/", staffAccess, async (req, res, next) => {
   const users = await Users.find({ active: false });
   if (users.length === 0) {
     return res.status(404).json({ message: "No users with active: false." });

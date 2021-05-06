@@ -2,9 +2,9 @@ const router = require("express").Router();
 const Movies = require("./model");
 const cloudinary = require("cloudinary").v2;
 const { validateMovie, checkMovieExists } = require("./middleware");
-const { registeredAcces, staffAcces } = require("../auth/middleware");
+const { staffAccess } = require("../auth/middleware");
 
-router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
+router.get("/", staffAccess, async (req, res, next) => {
   Movies.find()
     .exec()
     .then((movies) => {
@@ -15,18 +15,22 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 
 router.get(
   "/:movie_id",
+  staffAccess,
   checkMovieExists,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
-    res.status(200).json(movie);
+    try {
+      const movie = await Movies.findById(req.params.movie_id).exec();
+      res.status(200).json(movie);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 router.get(
   "/display/:movie_id",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
+  checkMovieExists,
   async (req, res, next) => {
     Movies.findById(req.params.movie_id)
       .exec()
@@ -44,10 +48,9 @@ router.get(
 
 router.put(
   "/:movie_id",
+  staffAccess,
   validateMovie,
   checkMovieExists,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -62,49 +65,42 @@ router.put(
   }
 );
 
-router.post(
-  "/",
-  validateMovie,
-  registeredAcces,
-  staffAcces,
-  async (req, res, next) => {
-    const { image_url, video_url } = req.body;
+router.post("/", staffAccess, validateMovie, async (req, res, next) => {
+  const { image_url, video_url } = req.body;
 
-    const cloudinaryImageUploadMethod = async (file) => {
-      return new Promise((resolve) => {
-        cloudinary.uploader.upload(file, (err, res) => {
-          if (err) return res.status(500).send("upload image error");
-          console.log(res.secure_url);
-          resolve(res.secure_url);
-        });
+  const cloudinaryImageUploadMethod = async (file) => {
+    return new Promise((resolve) => {
+      cloudinary.uploader.upload(file, (err, res) => {
+        if (err) return res.status(500).send("upload image error");
+        console.log(res.secure_url);
+        resolve(res.secure_url);
       });
-    };
-    const imageLink = await cloudinaryImageUploadMethod(image_url);
-    cloudinary.uploader
-      .upload(video_url, { resource_type: "video", chunk_size: 6000000 })
-      .then((result) => {
-        console.log("video:", result);
-        new Movies({
-          ...req.body,
-          image_url: imageLink,
-          video_url: result.secure_url,
-        })
-          .save()
-          .then((newMovie) => {
-            res.status(201).json(newMovie);
-          })
-          .catch(next);
+    });
+  };
+  const imageLink = await cloudinaryImageUploadMethod(image_url);
+  cloudinary.uploader
+    .upload(video_url, { resource_type: "video", chunk_size: 6000000 })
+    .then((result) => {
+      console.log("video:", result);
+      new Movies({
+        ...req.body,
+        image_url: imageLink,
+        video_url: result.secure_url,
       })
+        .save()
+        .then((newMovie) => {
+          res.status(201).json(newMovie);
+        })
+        .catch(next);
+    })
 
-      .catch(next);
-  }
-);
+    .catch(next);
+});
 
 router.delete(
   "/:movie_id",
+  staffAccess,
   checkMovieExists,
-  registeredAcces,
-  staffAcces,
   async (req, res, next) => {
     Movies.findByIdAndDelete(req.params.movie_id, { activ: false })
       .exec()

@@ -6,13 +6,13 @@ const {
 } = require("./middleware");
 const nodemailer = require("nodemailer");
 const {
-  registeredAcces,
-  staffAcces,
+  registeredAccess,
+  staffAccess,
   validateUserIdentity,
 } = require("../auth/middleware");
 const { checkUserExists } = require("../user/middleware");
 
-router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
+router.get("/", staffAccess, async (req, res, next) => {
   Notifications.find()
     .exec()
     .then((notifications) => {
@@ -23,8 +23,7 @@ router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
 
 router.get(
   "/:notification_id",
-  registeredAcces,
-  staffAcces,
+  registeredAccess,
   checkNotificationExists,
   async (req, res, next) => {
     Notifications.findById(req.params.notification_id)
@@ -38,15 +37,15 @@ router.get(
 
 router.get(
   "/:user_id/notifications",
-  registeredAcces,
+  registeredAccess,
   validateUserIdentity,
   checkUserExists,
   async (req, res, next) => {
     await Notifications.find({
       users: req.params.user_id,
     })
-      .then((notification) => {
-        return res.status(200).json(notification);
+      .then((notifications) => {
+        return res.status(200).json(notifications);
       })
       .catch(next);
   }
@@ -54,8 +53,7 @@ router.get(
 
 router.post(
   "/",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
   validateNewNotification,
   async (req, res, next) => {
     // let transporter = nodemailer.createTransport({
@@ -91,8 +89,7 @@ router.post(
 
 router.put(
   "/:notification_id",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
   validateNewNotification,
   checkNotificationExists,
   async (req, res, next) => {
@@ -112,8 +109,7 @@ router.put(
 
 router.delete(
   "/:notification_id",
-  registeredAcces,
-  staffAcces,
+  registeredAccess,
   checkNotificationExists,
   async (req, res, next) => {
     Notifications.findByIdAndDelete(req.params.notification_id)

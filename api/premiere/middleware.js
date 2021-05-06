@@ -5,13 +5,13 @@ const validateNewPremiere = async (req, res, next) => {
   await check("movie")
     .trim()
     .notEmpty()
-    .withMessage("movie is required")
+    .withMessage("Movie is required.")
     .custom((movie) => {
       return Premieres.findOne({ movie })
         .exec()
         .then((movie) => {
           if (!movie) {
-            return res.status(404).json("Movie does not exist");
+            return res.status(404).json("Movie does not exist.");
           }
         })
         .catch(next);
@@ -19,12 +19,15 @@ const validateNewPremiere = async (req, res, next) => {
     .run(req);
 
   await check("cinema")
+    .trim()
+    .notEmpty()
+    .withMessage("Cinema is required.")
     .custom((cinema) => {
       return Premieres.findOne({ cinema })
         .exec()
         .then((cinema) => {
           if (!cinema) {
-            return res.status(404).json("Cinema not found");
+            return res.status(404).json("Cinema not found.");
           }
         })
         .catch(next);
@@ -34,38 +37,39 @@ const validateNewPremiere = async (req, res, next) => {
   await check("premiere_date")
     .trim()
     .notEmpty()
-    .withMessage("Date premiere is required")
+    .withMessage("Date of premiere is required.")
     .isISO8601()
     .toDate()
-    .withMessage("Wrong date format")
+    .withMessage("Wrong date format.")
     .run(req);
 
   await check("price")
     .trim()
     .notEmpty()
-    .withMessage("price is required")
+    .withMessage("Price is required.")
     .isNumeric()
-    .withMessage("Unknown format")
+    .withMessage("Unknown format.")
     .run(req);
 
   await check("interval_hours")
     .trim()
     .notEmpty()
-    .withMessage("Interval runnig premiere is required")
+    .withMessage("Interval runnig premiere is required.")
     .run(req);
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(400).json({ error: errors.array() });
+  } else {
+    next();
   }
-  next();
 };
 
 const checkPremiereExists = async (req, res, next) => {
   Premieres.findOne({ _id: req.params.premiere_id, active: true })
     .then((premiere) => {
       if (!premiere) {
-        return res.status(404).json(" Premiere is not found ");
+        return res.status(404).json(" Premiere is not found. ");
       }
       next();
     })

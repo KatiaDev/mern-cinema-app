@@ -28,7 +28,10 @@ const reservationSchema = new mongoose.Schema(
     total_price: {
       type: Number,
     },
-    user_type: [],
+    user_type: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
