@@ -59,7 +59,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
 router.get("/logout", async (req, res, next) => {
   try {
     res.clearCookie("token");
-    return res.status(200).json("Logout successful !!!");
+    res.status(200).json("Logout successful !!!");
   } catch (error) {
     next();
   }

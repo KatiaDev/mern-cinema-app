@@ -24,9 +24,9 @@ router.get("/:cinema_id", checkCinemaExists, async (req, res, next) => {
 
 router.post(
   "/",
-  validateCinema,
   registeredAcces,
   staffAcces,
+  validateCinema,
   async (req, res, next) => {
     try {
       const foundCinema = await Cinemas.findOne({ name: req.body.name }).exec();
@@ -43,10 +43,11 @@ router.post(
 
 router.put(
   "/:cinema_id",
-  validateCinema,
-  checkCinemaExists,
   registeredAcces,
   staffAcces,
+  validateCinema,
+  checkCinemaExists,
+
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (req.body[curr]) {
@@ -70,9 +71,10 @@ router.put(
 
 router.delete(
   "/:cinema_id",
-  checkCinemaExists,
   registeredAcces,
   staffAcces,
+  checkCinemaExists,
+
   async (req, res, next) => {
     try {
       const deletedCinema = await Cinemas.findByIdAndDelete(
@@ -89,9 +91,10 @@ router.delete(
 
 router.get(
   "/:cinema_id/halls",
-  checkCinemaExists,
   registeredAcces,
   staffAcces,
+  checkCinemaExists,
+
   async (req, res, next) => {
     try {
       const halls = await Halls.find({ cinema: req.params.cinema_id }).exec();

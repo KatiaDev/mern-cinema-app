@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 
 const registeredAcces = async (req, res, next) => {
   const token = req.cookies.token;
+
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, please SingIn !!!" });
   }
@@ -16,16 +17,39 @@ const registeredAcces = async (req, res, next) => {
     }
     req.decoded = decoded;
     next();
+    /*else {
+      req.decoded = decoded;
+      if (req.decoded.role === 1 || 0) {
+        return next();
+      }*/
+  });
+};
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const staffAcces = async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized, please SingIn !!!" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res
+        .status(401)
+        .json({ message: "Token invalid, please SingIn !!!" });
+    }
+    req.decoded = decoded;
+    const { role } = req.decoded;
+    if (!role || role === 0) {
+      return res.status(403).json("No privileges for resource access");
+    } else {
+      next();
+    }
   });
 };
 
-const staffAcces = async (req, res, next) => {
-  const { role } = req.decoded;
-  if (!role || role === 0) {
-    res.status(403).json("No privileges for resource access");
-  }
-  next();
-};
+////////////////////////////////////////////////////////////////////////////////////////////
 
 const checkUserRegister = async (req, res, next) => {
   await check("password")
@@ -64,16 +88,18 @@ const checkUserRegister = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
+    return res.status(400).json({ error: errors.array() });
   }
   next();
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////
+
 const validateUserIdentity = async (req, res, next) => {
   console.log("Decoded", req.decoded);
   console.log("Params", req.params.user_id);
-  if (req.decoded._id !== req.params.user_id) {
-    return res.status(403).json("No privileges for resource access");
+  if (req.decoded._id !== req.params.user_id && req.decoded.role === 0) {
+    return res.status(403).json("Forbidden.");
   }
   next();
 };

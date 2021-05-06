@@ -33,6 +33,7 @@ const connectDB = async () => {
     console.log("Failed to connect to MongoDB", err);
   }
 };
+
 connectDB();
 
 if (typeof process.env.CLOUDINARY_URL === "undefined") {

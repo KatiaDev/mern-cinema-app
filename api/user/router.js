@@ -1,13 +1,13 @@
 const router = require("express").Router();
 const Users = require("./model");
-const { validateNewUser, checkUserExists } = require("./middleware");
+const { validateUserOnChange, checkUserExists } = require("./middleware");
 const {
   registeredAcces,
   staffAcces,
   validateUserIdentity,
 } = require("../auth/middleware");
 
-router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
+router.get("/", staffAcces, async (req, res, next) => {
   Users.find()
     .exec()
     .then((users) => {
@@ -35,7 +35,7 @@ router.put(
   "/:user_id",
   registeredAcces,
   validateUserIdentity,
-  validateNewUser,
+  validateUserOnChange,
   checkUserExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
@@ -57,7 +57,7 @@ router.delete(
   validateUserIdentity,
   checkUserExists,
   async (req, res, next) => {
-    Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
+    Users.findByIdAndUpdate({ _id: req.params.user_id }, { active: false })
       .exec()
       .then((removedUser) => {
         res.status(200).json(removedUser);
@@ -65,5 +65,21 @@ router.delete(
       .catch(next);
   }
 );
+
+////////////////////////////////// DELETE ALL USERS WITH active: false /////////////////////////////////////
+
+router.delete("/", staffAcces, async (req, res, next) => {
+  const users = await Users.find({ active: false });
+  if (users.length === 0) {
+    return res.status(404).json({ message: "No users with active: false." });
+  }
+
+  Users.deleteMany({ active: false })
+    .exec()
+    .then((deletedUsers) => {
+      res.status(200).json(deletedUsers);
+    })
+    .catch(next);
+});
 
 module.exports = router;
