@@ -4,6 +4,8 @@ const { validateNewUser } = require("../user/middleware");
 const { checkUserRegister } = require("./middleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const message = require("../../services/email/message");
+const twofactor = require("node-2fa");
 
 router.post("/register", validateNewUser, async (req, res, next) => {
   const {
@@ -27,7 +29,10 @@ router.post("/register", validateNewUser, async (req, res, next) => {
   })
     .save()
     .then((addedUser) => {
-      res.status(200).json(addedUser);
+      const newToken = twofactor.generateToken(process.env.SECRET_2FA);
+      console.log("newToken", newToken);
+      message.messageConfirmRegister(addedUser.email, addedUser._id, newToken);
+      return res.status(200).json(addedUser);
     })
     .catch(next);
 });
@@ -63,6 +68,19 @@ router.get("/logout", async (req, res, next) => {
   } catch (error) {
     next();
   }
+});
+
+router.post("/register-confirm/:token/:user_id", async (req, res, next) => {
+  const result = twofactor.verifyToken(
+    process.env.SECRET_2FA,
+    req.params.token
+  );
+  console.log("Utilizatorul", req.params.user_id);
+  console.log("Rezultat", result);
+
+  result === 0
+    ? res.status(200).json("vedem")
+    : res.status(500).json("Sorry, invalid your token");
 });
 
 module.exports = router;
