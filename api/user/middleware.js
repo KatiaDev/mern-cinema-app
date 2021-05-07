@@ -3,6 +3,7 @@ const Users = require("./model");
 
 const validateNewUser = async (req, res, next) => {
   await check("firstname")
+    .trim()
     .notEmpty()
     .withMessage("Firstname is required.")
     .isLength({ min: 3 })
@@ -10,6 +11,7 @@ const validateNewUser = async (req, res, next) => {
     .run(req);
 
   await check("lastname")
+    .trim()
     .notEmpty()
     .withMessage("Lastname is required.")
     .isLength({ min: 3 })
@@ -134,7 +136,7 @@ const validateUserOnChange = async (req, res, next) => {
     .run(req);
 
   await Users.find({
-    username,
+    username: req.body.username,
   })
     .then((users) => {
       if (users.length > 0 && req.body.username !== req.decoded.username) {
@@ -153,7 +155,7 @@ const validateUserOnChange = async (req, res, next) => {
     .run(req);
 
   await Users.find({
-    email,
+    email: req.body.email,
   })
     .exec()
     .then((users) => {
@@ -179,8 +181,9 @@ const checkUserExists = async (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(400).json(" User is not found.");
+      } else {
+        next();
       }
-      next();
     })
     .catch(next);
 };

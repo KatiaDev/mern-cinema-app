@@ -19,6 +19,14 @@ const reservationSchema = new mongoose.Schema(
       ref: "Users",
       require: true,
     },
+    firstname: {
+      type: String,
+      require: true,
+    },
+    lastname: {
+      type: String,
+      require: true,
+    },
 
     reserv_date: {
       type: Date,

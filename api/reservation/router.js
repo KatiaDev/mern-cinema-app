@@ -1,8 +1,10 @@
 const router = require("express").Router();
 const Reservations = require("./model");
+const Seats = require("../seat/model");
 const {
   checkReservationExists,
   validateNewReservation,
+  validateReservationOnChange,
 } = require("./middleware");
 const {
   registeredAccess,
@@ -12,6 +14,7 @@ const {
 
 router.get("/", staffAccess, async (req, res, next) => {
   Reservations.find()
+    .populate("Premieres", "Seats", "Users")
     .exec()
     .then((reservations) => {
       res.status(200).json(reservations);
@@ -26,6 +29,7 @@ router.get(
   async (req, res, next) => {
     console.log("A intrat in reservation_id");
     Reservations.findById(req.params.reservation_id)
+      .populate("Premieres", "Seats", "Users")
       .exec()
       .then((reservation) => {
         res.status(200).json(reservation);
@@ -39,6 +43,7 @@ router.get(
   validateUserIdentity,
   async (req, res, next) => {
     Reservations.find({ parent_user: req.params.user_id })
+      .populate("Premieres", "Seats", "Users")
       .exec()
       .then((reservations) => {
         res.status(200).json(reservations);
@@ -57,6 +62,7 @@ router.get(
       parent_user: req.params.user_id,
       _id: req.params.reservation_id,
     })
+      .populate("Premieres", "Seats", "Users")
       .exec()
       .then((reservation) => {
         res.status(200).json(reservation);
@@ -70,10 +76,17 @@ router.post(
   registeredAccess,
   validateNewReservation,
   async (req, res, next) => {
-    new Reservations(req.body)
+    new Reservations({ parent_id: req.decoded._id, ...req.body })
       .save()
       .then((newReservation) => {
         res.status(201).json(newReservation);
+      })
+      .catch(next);
+
+    Seats.findByIdAndUpdate({ _id: req.body.seat }, { available: false })
+      .exec()
+      .then((updatedSeat) => {
+        console.log("before change -> available: ", updatedSeat.available);
       })
       .catch(next);
   }
@@ -82,15 +95,11 @@ router.post(
 router.put(
   "/:reservation_id",
   registeredAccess,
-  validateNewReservation,
+  validateReservationOnChange,
   checkReservationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-      if (
-        (req.body[curr] && curr !== "premiere") ||
-        (req.body[curr] && curr !== "parent_user") ||
-        (req.body[curr] && curr !== "seat")
-      ) {
+      if (req.body[curr] && curr !== "parent_user") {
         acc[curr] = req.body[curr];
       }
       return acc;
@@ -102,6 +111,12 @@ router.put(
         res.status(200).json(updatedReservation);
       })
       .catch(next);
+    Seats.findByIdAndUpdate({ _id: req.body.seat }, { available: false })
+      .exec()
+      .then((updatedSeat) => {
+        console.log("before change -> available: ", updatedSeat.available);
+      })
+      .catch(next);
   }
 );
 
@@ -110,6 +125,14 @@ router.delete(
   registeredAccess,
   checkReservationExists,
   async (req, res, next) => {
+    const reserv = await Reservations.findById(
+      req.params.reservation_id
+    ).exec();
+    const updatedSeat = await Seats.findByIdAndUpdate(
+      { _id: reserv.seat },
+      { available: true }
+    ).exec();
+    console.log("updated seat after reserv deletion: ", updatedSeat.available);
     Reservations.findByIdAndDelete(req.params.reservation_id)
       .exec()
       .then((deletedReservation) => {

@@ -5,6 +5,7 @@ const { registeredAccess, staffAccess } = require("../auth/middleware");
 
 router.get("/", staffAccess, async (req, res, next) => {
   Tickets.find()
+    .populate("Reservations")
     .exec()
     .then((tickets) => {
       res.status(200).json(tickets);
@@ -18,6 +19,7 @@ router.get(
   checkTicketExists,
   async (req, res, next) => {
     Tickets.findById(req.params.ticket_id)
+      .populate("Reservations")
       .exec()
       .then((ticket) => {
         res.status(200).json(ticket);

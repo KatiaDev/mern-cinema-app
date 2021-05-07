@@ -1,5 +1,7 @@
 const { check, validationResult } = require("express-validator");
 const Premieres = require("./model");
+const Movies = require("../movie/model");
+const Cinemas = require("../cinema/model");
 
 const validateNewPremiere = async (req, res, next) => {
   await check("movie")
@@ -7,8 +9,7 @@ const validateNewPremiere = async (req, res, next) => {
     .notEmpty()
     .withMessage("Movie is required.")
     .custom((movie) => {
-      return Premieres.findOne({ movie })
-        .exec()
+      return Movies.findOne({ _id: movie })
         .then((movie) => {
           if (!movie) {
             return res.status(404).json("Movie does not exist.");
@@ -23,8 +24,7 @@ const validateNewPremiere = async (req, res, next) => {
     .notEmpty()
     .withMessage("Cinema is required.")
     .custom((cinema) => {
-      return Premieres.findOne({ cinema })
-        .exec()
+      return Cinemas.findOne({ _id: cinema })
         .then((cinema) => {
           if (!cinema) {
             return res.status(404).json("Cinema not found.");
@@ -35,12 +35,9 @@ const validateNewPremiere = async (req, res, next) => {
     .run(req);
 
   await check("premiere_date")
-    .trim()
     .notEmpty()
+    .isArray({ min: 1 })
     .withMessage("Date of premiere is required.")
-    .isISO8601()
-    .toDate()
-    .withMessage("Wrong date format.")
     .run(req);
 
   await check("price")
@@ -52,8 +49,8 @@ const validateNewPremiere = async (req, res, next) => {
     .run(req);
 
   await check("interval_hours")
-    .trim()
     .notEmpty()
+    .isArray({ min: 1 })
     .withMessage("Interval runnig premiere is required.")
     .run(req);
 
@@ -70,8 +67,9 @@ const checkPremiereExists = async (req, res, next) => {
     .then((premiere) => {
       if (!premiere) {
         return res.status(404).json(" Premiere is not found. ");
+      } else {
+        next();
       }
-      next();
     })
     .catch(next);
 };

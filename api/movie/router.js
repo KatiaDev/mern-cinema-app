@@ -70,16 +70,28 @@ router.post("/", staffAccess, validateMovie, async (req, res, next) => {
 
   const cloudinaryImageUploadMethod = async (file) => {
     return new Promise((resolve) => {
-      cloudinary.uploader.upload(file, (err, res) => {
-        if (err) return res.status(500).send("upload image error");
-        console.log(res.secure_url);
-        resolve(res.secure_url);
-      });
+      cloudinary.uploader.upload(
+        file,
+        {
+          folder: "movies",
+          use_filename: true,
+        },
+        (err, res) => {
+          if (err) return res.status(500).send("upload image error");
+          console.log(res.secure_url);
+          resolve(res.secure_url);
+        }
+      );
     });
   };
   const imageLink = await cloudinaryImageUploadMethod(image_url);
   cloudinary.uploader
-    .upload(video_url, { resource_type: "video", chunk_size: 6000000 })
+    .upload(video_url, {
+      resource_type: "video",
+      folder: "movies",
+      use_filename: true,
+      chunk_size: 6000000,
+    })
     .then((result) => {
       console.log("video:", result);
       new Movies({
