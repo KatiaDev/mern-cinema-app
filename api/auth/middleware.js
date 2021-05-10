@@ -17,11 +17,6 @@ const registeredAcces = async (req, res, next) => {
     }
     req.decoded = decoded;
     next();
-    /*else {
-      req.decoded = decoded;
-      if (req.decoded.role === 1 || 0) {
-        return next();
-      }*/
   });
 };
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -53,30 +48,30 @@ const staffAcces = async (req, res, next) => {
 
 const checkUserRegister = async (req, res, next) => {
   await check("password")
+    .trim()
     .isLength({ min: 8, max: 15 })
     .withMessage("your password should have min and max length between 8-15")
     .matches(/\d/)
     .withMessage("your password should have at least one number")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("your password should have at least one sepcial character")
-    .trim()
+
     .run(req);
 
   await check("email")
+    .trim()
     .isEmail()
     .normalizeEmail()
     .withMessage("the specified mail does not match the rules")
-    .trim()
     .run(req);
 
   await Users.findOne({
     email: req.body.email,
-    active: true,
+    status: "Active",
   })
     .exec()
     .then((user) => {
       if (user) {
-        console.log("Este", user);
         req.user = user;
       } else {
         return res
@@ -104,9 +99,26 @@ const validateUserIdentity = async (req, res, next) => {
   next();
 };
 
+const сheckConfirmationRegister = async (req, res, next) => {
+  await Users.findOne({ _id: req.params.user_id, status: "Active" })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        next();
+      } else {
+        return res
+          .status(500)
+          .json(
+            "Account is already activated thanks for choosing Olymp Cinema"
+          );
+      }
+    });
+};
+
 module.exports = {
   registeredAcces,
   checkUserRegister,
   staffAcces,
   validateUserIdentity,
+  сheckConfirmationRegister,
 };

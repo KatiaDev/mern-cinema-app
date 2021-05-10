@@ -152,7 +152,7 @@ const validateUserOnChange = async (req, res, next) => {
 };
 
 const checkUserExists = async (req, res, next) => {
-  Users.findOne({ _id: req.params.user_id, active: true })
+  Users.findOne({ _id: req.params.user_id, status: "Active" })
     .then((user) => {
       if (!user) {
         return res.status(400).json(" User is not found.");
