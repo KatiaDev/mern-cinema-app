@@ -14,7 +14,8 @@ const {
 
 router.get("/", staffAccess, async (req, res, next) => {
   Reservations.find()
-    .populate("Premieres", "Seats", "Users")
+    .populate("premiere", "-active")
+    .populate("seat")
     .exec()
     .then((reservations) => {
       res.status(200).json(reservations);
@@ -29,7 +30,8 @@ router.get(
   async (req, res, next) => {
     console.log("A intrat in reservation_id");
     Reservations.findById(req.params.reservation_id)
-      .populate("Premieres", "Seats", "Users")
+      .populate("premiere", "-active")
+      .populate("seat")
       .exec()
       .then((reservation) => {
         res.status(200).json(reservation);
@@ -43,7 +45,8 @@ router.get(
   validateUserIdentity,
   async (req, res, next) => {
     Reservations.find({ parent_user: req.params.user_id })
-      .populate("Premieres", "Seats", "Users")
+      .populate("premiere", "-active")
+      .populate("seat")
       .exec()
       .then((reservations) => {
         res.status(200).json(reservations);
@@ -62,7 +65,8 @@ router.get(
       parent_user: req.params.user_id,
       _id: req.params.reservation_id,
     })
-      .populate("Premieres", "Seats", "Users")
+      .populate("premiere", "-active")
+      .populate("seat")
       .exec()
       .then((reservation) => {
         res.status(200).json(reservation);
