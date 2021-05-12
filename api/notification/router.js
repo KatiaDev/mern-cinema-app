@@ -4,13 +4,13 @@ const {
   checkNotificationExists,
   validateNewNotification,
 } = require("./middleware");
-const nodemailer = require("nodemailer");
 const {
   registeredAccess,
   staffAccess,
   validateUserIdentity,
 } = require("../auth/middleware");
 const { checkUserExists } = require("../user/middleware");
+const { notificationSendEmail } = require("../../services/email/message");
 
 router.get("/", staffAccess, async (req, res, next) => {
   Notifications.find()
@@ -56,31 +56,20 @@ router.post(
   staffAccess,
   validateNewNotification,
   async (req, res, next) => {
-    // let transporter = nodemailer.createTransport({
-    //   host: process.env.HOST,
-    //   port: process.env.EMAIL_PORT,
-    //   secure: false,
-    //   auth: {
-    //     user: process.env.EMAIL_PROFILE,
-    //     pass: process.env.EMAIL_PASSWORD,
-    //   },
-    // });
-
-    // const msg = {
-    //   from: `"Olymp Cinema" <${process.env.EMAIL_PROFILE}>`,
-    //   to: "marin.cebotari94@gmail.com",
-    //   subject: "TestMesage",
-    //   text:  ` Salut, te rugam sa confirmi email localhost:4000/api/${eljfkwjef}`,
-    // };
-
-    // const info = await transporter.sendMail(msg);
-
-    // console.log("Message sent: %s", info.messageId);
-    // // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
     new Notifications(req.body)
       .save()
       .then((newNotification) => {
+        newNotification
+          .populate("users", "email -_id")
+          .execPopulate((error, notification) => {
+            notification.users.forEach((user) => {
+              notificationSendEmail(
+                user.email,
+                notification.title,
+                notification.content
+              );
+            });
+          });
         res.status(201).json(newNotification);
       })
       .catch(next);

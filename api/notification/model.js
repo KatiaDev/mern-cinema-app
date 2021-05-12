@@ -14,7 +14,7 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    users: [],
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
   },
 
   {
