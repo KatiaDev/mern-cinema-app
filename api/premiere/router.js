@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Premieres = require("./model");
-const middleware = require("./middleware");
+const { checkPremiereExists, validateNewPremiere } = require("./middleware");
+const { registeredAcces, staffAcces } = require("../auth/middleware");
 
 router.get("/", async (req, res, next) => {
   Premieres.find()
@@ -11,32 +12,36 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.get(
-  "/:premiere_id",
-  middleware.checkPremiereExists,
+router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
+  Premieres.findById(req.params.premiere_id)
+    .exec()
+    .then((premiere) => {
+      res.status(200).json(premiere);
+    })
+    .catch(next);
+});
+
+router.post(
+  "/",
+  registeredAcces,
+  staffAcces,
+  validateNewPremiere,
   async (req, res, next) => {
-    Premieres.findById(req.params.premiere_id)
-      .exec()
-      .then((premiere) => {
-        res.status(200).json(premiere);
+    new Premieres(req.body)
+      .save()
+      .then((newPremiere) => {
+        res.status(201).json(newPremiere);
       })
       .catch(next);
   }
 );
 
-router.post("/", middleware.validateNewPremiere, async (req, res, next) => {
-  new Premieres(req.body)
-    .save()
-    .then((newPremier) => {
-      res.status(200).json(newPremier);
-    })
-    .catch(next);
-});
-
 router.put(
   "/:premiere_id",
-  middleware.checkPremiereExists,
-  middleware.validateNewPremiere,
+  registeredAcces,
+  staffAcces,
+  validateNewPremiere,
+  checkPremiereExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       if (
@@ -50,8 +55,8 @@ router.put(
 
     Premieres.findByIdAndUpdate(req.params.premiere_id, bodyReducer)
       .exec()
-      .then((updatedPremier) => {
-        res.status(200).json(updatedPremier);
+      .then((updatedPremiere) => {
+        res.status(200).json(updatedPremiere);
       })
       .catch(next);
   }
@@ -59,7 +64,9 @@ router.put(
 
 router.delete(
   "/:premiere_id",
-  middleware.checkPremiereExists,
+  registeredAcces,
+  staffAcces,
+  checkPremiereExists,
   async (req, res, next) => {
     Premieres.findOneAndUpdate({
       _id: req.params.premiere_id,

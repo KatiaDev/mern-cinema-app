@@ -1,19 +1,31 @@
 const router = require("express").Router();
 const Notifications = require("./model");
-const middleware = require("./middleware");
+const {
+  checkNotificationExists,
+  validateNewNotification,
+} = require("./middleware");
+const {
+  registeredAcces,
+  staffAcces,
+  validateUserIdentity,
+} = require("../auth/middleware");
+const { checkUserExists } = require("../user/middleware");
+const { notificationSendEmail } = require("../../services/email/message");
 
-router.get("/", async (req, res, next) => {
+router.get("/", registeredAcces, staffAcces, async (req, res, next) => {
   Notifications.find()
     .exec()
-    .then((notification) => {
-      res.status(200).json(notification);
+    .then((notifications) => {
+      res.status(200).json(notifications);
     })
     .catch(next);
 });
 
 router.get(
   "/:notification_id",
-  middleware.checkNotificationExists,
+  registeredAcces,
+  staffAcces,
+  checkNotificationExists,
   async (req, res, next) => {
     Notifications.findById(req.params.notification_id)
       .exec()
@@ -24,19 +36,54 @@ router.get(
   }
 );
 
-router.post("/", middleware.validateNewNotification, async (req, res, next) => {
-  new Notifications(req.body)
-    .save()
-    .then((newNotification) => {
-      res.status(200).json(newNotification);
+router.get(
+  "/:user_id/notifications",
+  registeredAcces,
+  validateUserIdentity,
+  checkUserExists,
+  async (req, res, next) => {
+    await Notifications.find({
+      users: req.params.user_id,
     })
-    .catch(next);
-});
+      .then((notification) => {
+        return res.status(200).json(notification);
+      })
+      .catch(next);
+  }
+);
+
+router.post(
+  "/",
+  registeredAcces,
+  staffAcces,
+  validateNewNotification,
+  async (req, res, next) => {
+    new Notifications(req.body)
+      .save()
+      .then((newNotification) => {
+        newNotification
+          .populate("users", "email -_id")
+          .execPopulate((error, notification) => {
+            notification.users.forEach((user) => {
+              notificationSendEmail(
+                user.email,
+                notification.title,
+                notification.content
+              );
+            });
+          });
+        res.status(201).json(newNotification);
+      })
+      .catch(next);
+  }
+);
 
 router.put(
   "/:notification_id",
-  middleware.checkNotificationExists,
-  middleware.validateNewNotification,
+  registeredAcces,
+  staffAcces,
+  validateNewNotification,
+  checkNotificationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -45,8 +92,8 @@ router.put(
 
     Notifications.findByIdAndUpdate(req.params.notification_id, bodyReducer)
       .exec()
-      .then((updatedNoitification) => {
-        res.status(200).json(updatedNoitification);
+      .then((updatedNotification) => {
+        res.status(200).json(updatedNotification);
       })
       .catch(next);
   }
@@ -54,7 +101,9 @@ router.put(
 
 router.delete(
   "/:notification_id",
-  middleware.checkNotificationExists,
+  registeredAcces,
+  staffAcces,
+  checkNotificationExists,
   async (req, res, next) => {
     Notifications.findByIdAndDelete(req.params.notification_id)
       .exec()

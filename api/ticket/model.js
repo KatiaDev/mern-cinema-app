@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const ticketSchema = new mongoose.Schema(
   {
     reservation: {
@@ -10,7 +9,7 @@ const ticketSchema = new mongoose.Schema(
     },
     qrcode: {
       type: String,
-      required: true,
+      require: true,
     },
     pay_type: {
       type: String,

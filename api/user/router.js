@@ -1,29 +1,42 @@
 const router = require("express").Router();
 const Users = require("./model");
-const middleware = require("./middleware");
+const { validateUserOnChange, checkUserExists } = require("./middleware");
+const {
+  registeredAcces,
+  staffAcces,
+  validateUserIdentity,
+} = require("../auth/middleware");
 
-router.get("/", async (req, res, next) => {
+router.get("/", staffAcces, async (req, res, next) => {
   Users.find()
     .exec()
-    .then((user) => {
-      res.status(200).json(user);
+    .then((users) => {
+      res.status(200).json(users);
     })
     .catch(next);
 });
 
-router.get("/:user_id", middleware.checkUserExists, async (req, res, next) => {
-  Users.findById(req.params.user_id)
-    .exec()
-    .then((user) => {
-      res.status(200).json(user);
-    })
-    .catch(next);
-});
+router.get(
+  "/:user_id",
+  registeredAcces,
+  validateUserIdentity,
+  checkUserExists,
+  async (req, res, next) => {
+    Users.findById(req.params.user_id)
+      .exec()
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch(next);
+  }
+);
 
 router.put(
   "/:user_id",
-  middleware.validateNewUser,
-  middleware.checkUserExists,
+  registeredAcces,
+  validateUserIdentity,
+  validateUserOnChange,
+  checkUserExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
       acc[curr] = req.body[curr];
@@ -38,26 +51,35 @@ router.put(
   }
 );
 
-router.post("/", middleware.validateNewUser, async (req, res, next) => {
-  new Users(req.body)
-    .save()
-    .then((newUser) => {
-      res.status(200).json(newUser);
-    })
-    .catch(next);
-});
-
 router.delete(
   "/:user_id",
-  middleware.checkUserExists,
+  registeredAcces,
+  validateUserIdentity,
+  checkUserExists,
   async (req, res, next) => {
-    Users.findOneAndUpdate({ _id: req.params.user_id, active: false })
+    Users.findByIdAndUpdate({ _id: req.params.user_id }, { status: "Disable" })
       .exec()
-      .then((removeUser) => {
-        res.status(200).json(removeUser);
+      .then((removedUser) => {
+        res.status(200).json(removedUser);
       })
       .catch(next);
   }
 );
+
+////////////////////////////////// DELETE ALL USERS WITH active: false /////////////////////////////////////
+
+router.delete("/", staffAcces, async (req, res, next) => {
+  const users = await Users.find({ status: "Disable" });
+  if (users.length === 0) {
+    return res.status(404).json({ message: "No users with status: disable." });
+  }
+
+  Users.deleteMany({ status: "Disable" })
+    .exec()
+    .then((deletedUsers) => {
+      res.status(200).json(deletedUsers);
+    })
+    .catch(next);
+});
 
 module.exports = router;

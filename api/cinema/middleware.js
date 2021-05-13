@@ -16,8 +16,6 @@ const validateCinema = async (req, res, next) => {
     .withMessage("Address field can't be empty.")
     .isLength({ min: 5, max: 50 })
     .withMessage("Address must have min and max length between 5-30.")
-    .isAlphanumeric()
-    .withMessage("Address must contain alphabet and numeric characters.")
     .run(req);
 
   await check("zip_code")
@@ -52,7 +50,7 @@ const checkCinemaExists = async (req, res, next) => {
     .exec()
     .then((cinema) => {
       if (!cinema) {
-        return res.status(404).json({message: "Not found."});
+        return res.status(404).json({ message: "Not found." });
       } else {
         next();
       }

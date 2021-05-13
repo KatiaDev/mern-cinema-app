@@ -29,18 +29,14 @@ const validateNewTicket = async (req, res, next) => {
 };
 
 const checkTicketExists = async (req, res, next) => {
-  await check("ticket_id")
-    .custom((ticket) => {
-      return Tickets.findById(ticket)
-        .then((ticket) => {
-          if (!ticket) {
-            return res.status(404).json(" Ticket is not found ");
-          }
-        })
-        .catch(next);
+  Tickets.findById(req.params.ticket_id)
+    .then((ticket) => {
+      if (!ticket) {
+        return res.status(404).json(" Ticket is not found ");
+      }
+      next();
     })
-    .run(req);
-  next();
+    .catch(next);
 };
 
 module.exports = {

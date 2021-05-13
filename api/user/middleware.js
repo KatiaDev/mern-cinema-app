@@ -3,46 +3,62 @@ const Users = require("./model");
 
 const validateNewUser = async (req, res, next) => {
   await check("firstname")
+    .notEmpty()
+    .withMessage("Firstname is required.")
     .isLength({ min: 3 })
-    .withMessage("the firstname must have minimum length of 3")
+    .withMessage("Firstname must have minimum length of 3.")
     .trim()
     .run(req);
 
   await check("lastname")
+    .notEmpty()
+    .withMessage("Lastname is required.")
     .isLength({ min: 3 })
-    .withMessage("the lastname must have minimum length of 3")
+    .withMessage("Lastname must have minimum length of 3.")
     .trim()
     .run(req);
 
   await check("age")
     .notEmpty()
-    .withMessage("then age is required")
+    .withMessage("Age is required.")
     .isNumeric()
-    .withMessage("invalid format")
+    .withMessage("Invalid format.")
     .run(req);
 
   await check("mobile")
     .trim()
     .notEmpty()
-    .withMessage("the mobile number is required")
+    .withMessage("Mobile phone number is required.")
     .isMobilePhone()
-    .withMessage("mobile phone number is wrong")
+    .withMessage("Mobile phone number is wrong.")
+    .run(req);
+
+  await check("username")
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 4, max: 10 })
+    .withMessage("Username should have min and max length between 4-10")
+    .trim()
     .run(req);
 
   await check("password")
+    .notEmpty()
+    .withMessage("Password is required")
     .isLength({ min: 8, max: 15 })
-    .withMessage("your password should have min and max length between 8-15")
+    .withMessage("Your password should have min and max length between 8-15.")
     .matches(/\d/)
-    .withMessage("your password should have at least one number")
+    .withMessage("Your password should have at least one number.")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
-    .withMessage("your password should have at least one sepcial character")
+    .withMessage("Your password should have at least one special character.")
     .trim()
     .run(req);
 
   await check("email")
+    .notEmpty()
+    .withMessage("Email is required.")
     .isEmail()
     .normalizeEmail()
-    .withMessage("the specified mail does not match the rules")
+    .withMessage("The specified email does not match the rules.")
     .trim()
     .custom((email) => {
       return Users.find({
@@ -50,7 +66,7 @@ const validateNewUser = async (req, res, next) => {
       })
         .then((user) => {
           if (user.length > 0) {
-            throw "Email is already registered";
+            return res.status(400).json("Email is already registered.");
           }
         })
         .catch(next);
@@ -60,31 +76,94 @@ const validateNewUser = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
+    return res.status(400).json({ error: errors.array() });
+  } else {
+    next();
   }
-  next();
+};
+
+const validateUserOnChange = async (req, res, next) => {
+  await check("firstname")
+    .notEmpty()
+    .withMessage("Firstname is required.")
+    .isLength({ min: 3 })
+    .withMessage("Firstname must have minimum length of 3.")
+    .trim()
+    .run(req);
+
+  await check("lastname")
+    .notEmpty()
+    .withMessage("Lastname is required.")
+    .isLength({ min: 3 })
+    .withMessage("Lastname must have minimum length of 3.")
+    .trim()
+    .run(req);
+
+  await check("age")
+    .notEmpty()
+    .withMessage("Age is required.")
+    .isNumeric()
+    .withMessage("Invalid format.")
+    .run(req);
+
+  await check("mobile")
+    .trim()
+    .notEmpty()
+    .withMessage("Mobile phone number is required.")
+    .isMobilePhone()
+    .withMessage("Mobile phone number is wrong.")
+    .run(req);
+
+  await check("username")
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 4, max: 10 })
+    .withMessage("Username should have min and max length between 4-10")
+    .trim()
+    .run(req);
+
+  await check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required.")
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("The specified email does not match the rules.")
+    .run(req);
+
+  await Users.find({
+    email: req.body.email,
+  })
+    .exec()
+    .then((users) => {
+      if (users.length > 0 && req.body.email !== req.decoded.email) {
+        return res.status(400).json("Email is already registered.");
+      }
+    })
+    .catch(next);
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ error: errors.array() });
+  } else {
+    next();
+  }
 };
 
 const checkUserExists = async (req, res, next) => {
-  await check("user_id")
-    .trim()
-    .notEmpty()
-    .withMessage("User is required")
-    .custom((user) => {
-      return Users.findOne({ _id: req.params.user_id, active: true })
-        .then((user) => {
-          if (!user) {
-            return res.status(400).json(" User is not found ");
-          }
-        })
-        .catch(next);
+  Users.findOne({ _id: req.params.user_id, status: "Active" })
+    .then((user) => {
+      if (!user) {
+        return res.status(400).json(" User is not found.");
+      }
+      next();
     })
-    .run(req);
-
-  next();
+    .catch(next);
 };
 
 module.exports = {
   validateNewUser,
+  validateUserOnChange,
   checkUserExists,
 };
