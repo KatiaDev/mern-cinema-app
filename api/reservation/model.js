@@ -28,7 +28,15 @@ const reservationSchema = new mongoose.Schema(
     total_price: {
       type: Number,
     },
-    user_type: [],
+    other_client: [
+      {
+        age_category: {
+          type: String,
+          require: true,
+          enum: ["Minor", "Adolescent", "Adult"],
+        },
+      },
+    ],
   },
   {
     timestamps: true,

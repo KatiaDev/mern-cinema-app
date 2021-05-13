@@ -30,9 +30,10 @@ const movieSchema = new mongoose.Schema(
     actors: {
       type: Array,
     },
-    age_restrict: {
+    age_category_restrict: {
       type: String,
       required: true,
+      enum: ["Minor", "Adolescent", "Adult"],
     },
     duration: {
       type: String,
