@@ -1,10 +1,12 @@
 const router = require("express").Router();
 const Premieres = require("./model");
 const { checkPremiereExists, validateNewPremiere } = require("./middleware");
-const { registeredAcces, staffAcces } = require("../auth/middleware");
+const { staffAccess } = require("../auth/middleware");
 
 router.get("/", async (req, res, next) => {
   Premieres.find()
+    .populate("movie", "title -_id")
+    .populate("cinema", "name -_id")
     .exec()
     .then((premieres) => {
       res.status(200).json(premieres);
@@ -14,6 +16,8 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
   Premieres.findById(req.params.premiere_id)
+    .populate("movie", "title -_id")
+    .populate("cinema", "name -_id")
     .exec()
     .then((premiere) => {
       res.status(200).json(premiere);
@@ -21,25 +25,18 @@ router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
     .catch(next);
 });
 
-router.post(
-  "/",
-  registeredAcces,
-  staffAcces,
-  validateNewPremiere,
-  async (req, res, next) => {
-    new Premieres(req.body)
-      .save()
-      .then((newPremiere) => {
-        res.status(201).json(newPremiere);
-      })
-      .catch(next);
-  }
-);
+router.post("/", staffAccess, validateNewPremiere, async (req, res, next) => {
+  new Premieres(req.body)
+    .save()
+    .then((newPremiere) => {
+      res.status(201).json(newPremiere);
+    })
+    .catch(next);
+});
 
 router.put(
   "/:premiere_id",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
   validateNewPremiere,
   checkPremiereExists,
   async (req, res, next) => {
@@ -64,14 +61,13 @@ router.put(
 
 router.delete(
   "/:premiere_id",
-  registeredAcces,
-  staffAcces,
+  staffAccess,
   checkPremiereExists,
   async (req, res, next) => {
-    Premieres.findOneAndUpdate({
-      _id: req.params.premiere_id,
-      active: false,
-    })
+    Premieres.findByIdAndUpdate(
+      { _id: req.params.premiere_id },
+      { active: false }
+    )
       .exec()
       .then((deletedPremiere) => {
         res.status(200).json(deletedPremiere);

@@ -3,19 +3,19 @@ const Users = require("./model");
 
 const validateNewUser = async (req, res, next) => {
   await check("firstname")
+    .trim()
     .notEmpty()
     .withMessage("Firstname is required.")
     .isLength({ min: 3 })
     .withMessage("Firstname must have minimum length of 3.")
-    .trim()
     .run(req);
 
   await check("lastname")
+    .trim()
     .notEmpty()
     .withMessage("Lastname is required.")
     .isLength({ min: 3 })
     .withMessage("Lastname must have minimum length of 3.")
-    .trim()
     .run(req);
 
   await check("age")
@@ -34,38 +34,49 @@ const validateNewUser = async (req, res, next) => {
     .run(req);
 
   await check("username")
+    .trim()
     .notEmpty()
     .withMessage("Username is required")
     .isLength({ min: 4, max: 10 })
     .withMessage("Username should have min and max length between 4-10")
-    .trim()
+    .custom((username) => {
+      return Users.find({
+        username,
+      })
+        .then((users) => {
+          if (users.length > 0) {
+            return res.status(400).json("Username is already in use.");
+          }
+        })
+        .catch(next);
+    })
     .run(req);
 
   await check("password")
+    .trim()
     .notEmpty()
-    .withMessage("Password is required")
+    .withMessage("Password is required.")
     .isLength({ min: 8, max: 15 })
     .withMessage("Your password should have min and max length between 8-15.")
     .matches(/\d/)
     .withMessage("Your password should have at least one number.")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("Your password should have at least one special character.")
-    .trim()
     .run(req);
 
   await check("email")
+    .trim()
     .notEmpty()
     .withMessage("Email is required.")
     .isEmail()
     .normalizeEmail()
     .withMessage("The specified email does not match the rules.")
-    .trim()
     .custom((email) => {
       return Users.find({
         email,
       })
-        .then((user) => {
-          if (user.length > 0) {
+        .then((users) => {
+          if (users.length > 0) {
             return res.status(400).json("Email is already registered.");
           }
         })
@@ -82,21 +93,23 @@ const validateNewUser = async (req, res, next) => {
   }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const validateUserOnChange = async (req, res, next) => {
   await check("firstname")
+    .trim()
     .notEmpty()
     .withMessage("Firstname is required.")
     .isLength({ min: 3 })
     .withMessage("Firstname must have minimum length of 3.")
-    .trim()
     .run(req);
 
   await check("lastname")
+    .trim()
     .notEmpty()
     .withMessage("Lastname is required.")
     .isLength({ min: 3 })
     .withMessage("Lastname must have minimum length of 3.")
-    .trim()
     .run(req);
 
   await check("age")
@@ -115,12 +128,22 @@ const validateUserOnChange = async (req, res, next) => {
     .run(req);
 
   await check("username")
+    .trim()
     .notEmpty()
     .withMessage("Username is required")
     .isLength({ min: 4, max: 10 })
     .withMessage("Username should have min and max length between 4-10")
-    .trim()
     .run(req);
+
+  await Users.find({
+    username: req.body.username,
+  })
+    .then((users) => {
+      if (users.length > 0 && req.body.username !== req.decoded.username) {
+        return res.status(400).json("Username is already in use.");
+      }
+    })
+    .catch(next);
 
   await check("email")
     .trim()
@@ -151,13 +174,16 @@ const validateUserOnChange = async (req, res, next) => {
   }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const checkUserExists = async (req, res, next) => {
   Users.findOne({ _id: req.params.user_id, status: "Active" })
     .then((user) => {
       if (!user) {
         return res.status(400).json(" User is not found.");
+      } else {
+        next();
       }
-      next();
     })
     .catch(next);
 };

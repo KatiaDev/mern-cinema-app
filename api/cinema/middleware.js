@@ -7,8 +7,6 @@ const validateCinema = async (req, res, next) => {
     .withMessage("Name field can't be empty.")
     .isLength({ min: 5, max: 30 })
     .withMessage("Name must have min and max length between 5-30.")
-    .isAlpha()
-    .withMessage("Name must contain only alphabet characters.")
     .run(req);
 
   await check("address")

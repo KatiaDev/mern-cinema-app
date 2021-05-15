@@ -12,15 +12,8 @@ const twofactor = require("node-2fa");
 const mongoose = require("mongoose");
 
 router.post("/register", validateNewUser, async (req, res, next) => {
-  const {
-    firstname,
-    lastname,
-    age,
-    email,
-    username,
-    password,
-    mobile,
-  } = req.body;
+  const { firstname, lastname, age, email, username, password, mobile } =
+    req.body;
 
   new Users({
     firstname,
@@ -35,16 +28,26 @@ router.post("/register", validateNewUser, async (req, res, next) => {
     .then((addedUser) => {
       const newToken = twofactor.generateToken(process.env.SECRET_2FA);
       message.messageConfirmRegister(addedUser.email, addedUser._id, newToken);
-      return res.status(200).json(addedUser);
+      return res.status(200).send({
+        message: "User was registered successfully! Please check your email",
+      });
+      //return res.status(200).json(addedUser);
     })
     .catch(next);
 });
 
 router.post("/login", checkUserRegister, async (req, res, next) => {
-  const { _id, email, username, password, role } = req.user;
+  const { _id, email, username, password, role, status } = req.user;
+  /*
+  if (req.user.status !== "Active") {
+    return res
+      .status(401)
+      .json({ message: "Pending Account.Please verify your email!" });
+  }*/
+
   const passwordValid = await bcrypt.compare(req.body.password, password);
   if (!passwordValid) {
-    return res.status(401).json("Invalid credentials");
+    return res.status(401).json("Invalid credentials.");
   }
 
   const token = jwt.sign(
@@ -61,7 +64,7 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
   );
   res.cookie("token", token);
 
-  return res.status(200).json("SingIn Succesful, welcome to Olymp Cinema !!!");
+  return res.status(200).json("SignIn Successful, Welcome to Olymp Cinema !!!");
 });
 
 router.get("/logout", async (req, res, next) => {
@@ -85,14 +88,16 @@ router.post(
     console.log(result);
 
     if (!result || !mongoose.Types.ObjectId.isValid(req.params.user_id)) {
-      return res.status(500).json("Sorry, invalid your token");
+      return res.status(500).json("Sorry, invalid token.");
     } else {
       await Users.findByIdAndUpdate(req.params.user_id, {
         status: "Active",
       })
         .exec()
         .then((user) => {
-          return res.status(200).json("Your activation account was successful");
+          return res
+            .status(200)
+            .json("Your account was successfully activated.");
         });
     }
   }

@@ -5,27 +5,27 @@ const validateNewTicket = async (req, res, next) => {
   await check("qrcode")
     .trim()
     .notEmpty()
-    .withMessage(" QR - Code is required")
+    .withMessage(" QR - Code is required.")
     .isLength({ min: 10 })
-    .withMessage(" QR - Code is corrupt")
+    .withMessage(" QR - Code is corrupt.")
     .run(req);
 
   await check("pay_type")
     .trim()
     .notEmpty()
-    .withMessage(" Pay type is required ")
+    .withMessage(" Pay type is required. ")
     .isLength({ min: 3 })
     .isIn(["cash", "card", "bitcoin"])
-    .withMessage(" Undefined pay type")
+    .withMessage(" Undefined pay type.")
     .run(req);
 
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(400).json({ error: errors.array() });
+    return res.status(400).json({ error: errors.array() });
+  } else {
+    next();
   }
-
-  next();
 };
 
 const checkTicketExists = async (req, res, next) => {

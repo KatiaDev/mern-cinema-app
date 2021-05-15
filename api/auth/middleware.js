@@ -2,18 +2,18 @@ const Users = require("../user/model");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 
-const registeredAcces = async (req, res, next) => {
+const registeredAccess = async (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized, please SingIn !!!" });
+    return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res
         .status(401)
-        .json({ message: "Token invalid, please SingIn !!!" });
+        .json({ message: "Token invalid, please SignIn !!!" });
     }
     req.decoded = decoded;
     next();
@@ -21,23 +21,23 @@ const registeredAcces = async (req, res, next) => {
 };
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const staffAcces = async (req, res, next) => {
+const staffAccess = async (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized, please SingIn !!!" });
+    return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res
         .status(401)
-        .json({ message: "Token invalid, please SingIn !!!" });
+        .json({ message: "Token invalid, please SignIn !!!" });
     }
     req.decoded = decoded;
     const { role } = req.decoded;
     if (!role || role === 0) {
-      return res.status(403).json("No privileges for resource access");
+      return res.status(403).json("No privileges for resource access.");
     } else {
       next();
     }
@@ -50,19 +50,21 @@ const checkUserRegister = async (req, res, next) => {
   await check("password")
     .trim()
     .isLength({ min: 8, max: 15 })
-    .withMessage("your password should have min and max length between 8-15")
+    .withMessage("Your password should have min and max length between 8-15.")
     .matches(/\d/)
-    .withMessage("your password should have at least one number")
+    .withMessage("Your password should have at least one number.")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
-    .withMessage("your password should have at least one sepcial character")
+    .withMessage("Your password should have at least one special character")
 
     .run(req);
 
   await check("email")
     .trim()
+    .notEmpty()
+    .withMessage("Email is required.")
     .isEmail()
     .normalizeEmail()
-    .withMessage("the specified mail does not match the rules")
+    .withMessage("The specified email does not match the rules.")
     .run(req);
 
   await Users.findOne({
@@ -76,7 +78,7 @@ const checkUserRegister = async (req, res, next) => {
       } else {
         return res
           .status(404)
-          .json("You do not have a profile please register");
+          .json("You do not have a profile. Please Register.");
       }
     });
 
@@ -116,9 +118,9 @@ const сheckConfirmationRegister = async (req, res, next) => {
 };
 
 module.exports = {
-  registeredAcces,
+  registeredAccess,
   checkUserRegister,
-  staffAcces,
+  staffAccess,
   validateUserIdentity,
   сheckConfirmationRegister,
 };

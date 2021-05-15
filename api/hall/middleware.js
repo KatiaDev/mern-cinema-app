@@ -7,8 +7,6 @@ const validateHall = async (req, res, next) => {
     .withMessage("Name field can't be empty.")
     .isLength({ min: 5 })
     .withMessage("Contact must have min length of 5.")
-    .isAlphanumeric()
-    .withMessage("Invalid name.")
     .run(req);
 
   await check("seats_total")
