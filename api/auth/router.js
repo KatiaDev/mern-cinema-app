@@ -88,14 +88,16 @@ router.post(
     console.log(result);
 
     if (!result || !mongoose.Types.ObjectId.isValid(req.params.user_id)) {
-      return res.status(500).json("Sorry, invalid your token");
+      return res.status(500).json("Sorry, invalid token.");
     } else {
       await Users.findByIdAndUpdate(req.params.user_id, {
         status: "Active",
       })
         .exec()
         .then((user) => {
-          return res.status(200).json("Your activation account was successful");
+          return res
+            .status(200)
+            .json("Your account was successfully activated.");
         });
     }
   }
