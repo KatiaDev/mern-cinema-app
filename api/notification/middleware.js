@@ -22,7 +22,7 @@ const validateNewNotification = async (req, res, next) => {
     .trim()
     .notEmpty()
     .withMessage("Notification type is required.")
-    .isIn(["promotie", "autentificare", "plata"])
+    .isIn(["Promotie", "Autentificare", "Tichet"])
     .withMessage("Undefined notification type.")
     .isString()
     .withMessage("Type error for notification.")

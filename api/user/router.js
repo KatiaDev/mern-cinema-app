@@ -42,7 +42,7 @@ router.put(
       if (
         (req.body[curr] && curr !== "password") ||
         (req.body[curr] && curr !== "role") ||
-        (req.body[curr] && curr !== "active")
+        (req.body[curr] && curr !== "status")
       ) {
         acc[curr] = req.body[curr];
       }
@@ -72,9 +72,9 @@ router.delete(
   }
 );
 
-////////////////////////////////// DELETE ALL USERS WITH active: false /////////////////////////////////////
+////////////////////////////////// DELETE ALL USERS WITH status: Disable /////////////////////////////////////
 
-router.delete("/", staffAcces, async (req, res, next) => {
+router.delete("/", staffAccess, async (req, res, next) => {
   const users = await Users.find({ status: "Disable" });
   if (users.length === 0) {
     return res.status(404).json({ message: "No users with status: disable." });
