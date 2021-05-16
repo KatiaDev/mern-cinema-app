@@ -11,14 +11,17 @@ const premiereSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cinemas",
     },
-    premiere_date: {
-      type: Array,
-      require: true,
+    premiere_start_date: {
+      type: Date,
+      required: true,
     },
-    interval_hours: {
-      type: Array,
-      require: true,
+
+    premiere_end_date: {
+      type: Date,
+      required: true,
     },
+
+    interval_hours: [],
     price: {
       type: Number,
       require: true,
