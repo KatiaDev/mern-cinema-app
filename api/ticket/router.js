@@ -30,7 +30,6 @@ router.get(
 router.put(
   "/:ticket_id",
   staffAccess,
-  validateNewTicket,
   checkTicketExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {

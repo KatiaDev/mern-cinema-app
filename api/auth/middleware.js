@@ -75,6 +75,10 @@ const checkUserRegister = async (req, res, next) => {
     .then((user) => {
       if (user) {
         req.user = user;
+      } else if (user && user.status === "Pending") {
+        return res
+          .status(401)
+          .json({ message: "Pending Account.Please verify your email!" });
       } else {
         return res
           .status(404)
@@ -86,8 +90,9 @@ const checkUserRegister = async (req, res, next) => {
 
   if (!errors.isEmpty()) {
     return res.status(400).json({ error: errors.array() });
+  } else {
+    next();
   }
-  next();
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +105,9 @@ const validateUserIdentity = async (req, res, next) => {
   }
   next();
 };
+
+////// acest middleware "сheckConfirmationRegister" se executa atunci cand user-ul apasa pe butonul "Activeaza contul" din email,
+///// daca contul a fost activat deja, se arunca eroarea din else, daca nu => next()
 
 const сheckConfirmationRegister = async (req, res, next) => {
   await Users.findOne({ _id: req.params.user_id, status: "Active" })

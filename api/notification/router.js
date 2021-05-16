@@ -9,7 +9,6 @@ const {
   staffAccess,
   validateUserIdentity,
 } = require("../auth/middleware");
-const { checkUserExists } = require("../user/middleware");
 const { notificationSendEmail } = require("../../services/email/message");
 
 router.get("/", staffAccess, async (req, res, next) => {
@@ -23,7 +22,7 @@ router.get("/", staffAccess, async (req, res, next) => {
 
 router.get(
   "/:notification_id",
-  registeredAccess,
+  staffAccess,
   checkNotificationExists,
   async (req, res, next) => {
     Notifications.findById(req.params.notification_id)
@@ -39,7 +38,6 @@ router.get(
   "/:user_id/notifications",
   registeredAccess,
   validateUserIdentity,
-  checkUserExists,
   async (req, res, next) => {
     await Notifications.find({
       users: req.params.user_id,
@@ -79,7 +77,6 @@ router.post(
 router.put(
   "/:notification_id",
   staffAccess,
-  validateNewNotification,
   checkNotificationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
@@ -98,7 +95,7 @@ router.put(
 
 router.delete(
   "/:notification_id",
-  registeredAccess,
+  staffAccess,
   checkNotificationExists,
   async (req, res, next) => {
     Notifications.findByIdAndDelete(req.params.notification_id)

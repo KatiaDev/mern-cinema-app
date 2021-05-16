@@ -6,7 +6,7 @@ const validateNewTicket = async (req, res, next) => {
     .trim()
     .notEmpty()
     .withMessage(" QR - Code is required.")
-    .isLength({ min: 10 })
+    .isLength({ min: 24 })
     .withMessage(" QR - Code is corrupt.")
     .run(req);
 
@@ -14,7 +14,7 @@ const validateNewTicket = async (req, res, next) => {
     .trim()
     .notEmpty()
     .withMessage(" Pay type is required. ")
-    .isLength({ min: 3 })
+    .isLength({ min: 4 })
     .isIn(["cash", "card", "bitcoin"])
     .withMessage(" Undefined pay type.")
     .run(req);
