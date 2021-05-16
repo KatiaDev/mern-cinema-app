@@ -15,15 +15,12 @@ const seatSchema = new mongoose.Schema({
   },
   seat_type: {
     type: String,
+    enum: ["Gold", "Standart", "Econom"],
     required: true,
   },
   seat_price: {
-    type: String,
+    type: Number,
     required: true,
-  },
-  available: {
-    type: Boolean,
-    default: true,
   },
 });
 

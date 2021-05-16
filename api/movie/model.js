@@ -45,6 +45,15 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    performance: [
+      {
+        date: Date,
+        hour: Date,
+        cinema: mongoose.Schema.Types.ObjectId,
+        hall: mongoose.Schema.Types.ObjectId,
+        //type:Array,
+      },
+    ],
   },
   {
     timestamps: true,
