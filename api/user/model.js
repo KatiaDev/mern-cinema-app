@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  age: {
-    type: Number,
+  age_category: {
+    type: String,
+    enum: ["Minor", "Adolescent", "Adult"],
     require: true,
   },
   email: {

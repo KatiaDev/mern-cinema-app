@@ -204,6 +204,14 @@ const checkReservationExists = async (req, res, next) => {
     .catch(next);
 };
 
+const restrictedReservation = async (req, res, next) => {
+  Users.findById(req.body.parent_user)
+    .exec()
+    .then((user) => {
+      console.log(user);
+    });
+};
+
 module.exports = {
   validateNewReservation,
   validateReservationOnChange,
