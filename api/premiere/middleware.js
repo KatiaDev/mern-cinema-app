@@ -34,12 +34,6 @@ const validateNewPremiere = async (req, res, next) => {
     })
     .run(req);
 
-  await check("premiere_date")
-    .notEmpty()
-    .isArray({ min: 1 })
-    .withMessage("Date of premiere is required.")
-    .run(req);
-
   await check("price")
     .trim()
     .notEmpty()

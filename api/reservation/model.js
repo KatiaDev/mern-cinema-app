@@ -19,14 +19,16 @@ const reservationSchema = new mongoose.Schema(
       ref: "Users",
       require: true,
     },
-    firstname: {
-      type: String,
-      require: true,
-    },
-    lastname: {
-      type: String,
-      require: true,
-    },
+
+    other_client: [
+      {
+        age_category: {
+          type: String,
+          enum: ["Minor", "Adolescent", "Adult"],
+          require: true,
+        },
+      },
+    ],
 
     reserv_date: {
       type: Date,
@@ -36,15 +38,6 @@ const reservationSchema = new mongoose.Schema(
     total_price: {
       type: Number,
     },
-    other_client: [
-      {
-        age_category: {
-          type: String,
-          require: true,
-          enum: ["Minor", "Adolescent", "Adult"],
-        },
-      },
-    ],
   },
   {
     timestamps: true,

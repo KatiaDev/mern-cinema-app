@@ -212,8 +212,25 @@ const restrictedReservation = async (req, res, next) => {
     });
 };
 
+const checkPermiereExists = async (req, res, next) => {
+  const date = new Date("2021-01-02");
+
+  // console.log(req.body.premiere);
+  Premieres.findOne({ _id: req.body.premiere })
+    .exec()
+    .then((premiere) => {
+      if (
+        premiere.premiere_start_date <= date &&
+        premiere.premiere_end_date >= date
+      ) {
+        console.log("Succes", date);
+      }
+    });
+};
+
 module.exports = {
   validateNewReservation,
   validateReservationOnChange,
   checkReservationExists,
+  checkPermiereExists,
 };
