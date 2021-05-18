@@ -17,22 +17,6 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Seat is required.")
     .run(req);
 
-  await check("firstname")
-    .trim()
-    .notEmpty()
-    .withMessage("Firstname is required.")
-    .isLength({ min: 3 })
-    .withMessage("Firstname must have minimum length of 3.")
-    .run(req);
-
-  await check("lastname")
-    .trim()
-    .notEmpty()
-    .withMessage("Lastname is required.")
-    .isLength({ min: 3 })
-    .withMessage("Lastname must have minimum length of 3.")
-    .run(req);
-
   await check("reserv_date")
     .trim()
     .notEmpty()
@@ -50,12 +34,12 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Unknown format.")
     .run(req);
 
-  await check("user_type")
+  await check("other_client")
     .trim()
     .notEmpty()
     .withMessage("User type price is required.")
-    .isIn(["copil", "minor", "adult"])
-    .withMessage("Undefined user type.")
+    .isIn(["Minor", "Adolescent", "Adult"])
+    .withMessage("Undefined age category.")
     .run(req);
 
   const errors = validationResult(req);
@@ -64,134 +48,36 @@ const validateNewReservation = async (req, res, next) => {
     return res.status(400).json({ error: errors.array() });
   }
   if (req.body.premiere) {
-    await Premieres.findOne({ _id: req.body.premiere })
+    Premieres.findOne({ _id: req.body.premiere })
+      .exec()
       .then((premiere) => {
-        if (!premiere || premiere.active === false) {
+        if (
+          premiere.premiere_start_date <= req.body.reserv_date &&
+          premiere.premiere_end_date >= req.body.reserv_date
+        ) {
+          const premiereHoursExists = premiere.interval_hours.filter(
+            (el) => el === req.body.reserv_hour
+          );
+
+          if (premiereHoursExists.length !== 0) {
+            return next();
+          }
           return res
-            .status(404)
-            .json(
-              "The premiere of the selected movie is currently unavailable."
-            );
-        }
-      })
-      .catch(next);
-  }
-  if (req.body.seat) {
-    await Seats.findById(req.body.seat)
-      .then((seat) => {
-        if (seat.available === false) {
-          //console.log("decoded", req.decoded);
-          return res.status(404).json("Seat is taken!!!");
+            .status(403)
+            .json("there is no premiere on the selected time");
         } else {
-          req.seat = seat;
-          next();
+          console.log("Data nu e ok");
+          return res
+            .status(403)
+            .json("there is no premiere on the selected date and time");
         }
-      })
-      .catch(next);
+      });
   } else {
-    next();
+    return next();
   }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const validateReservationOnChange = async (req, res, next) => {
-  await check("premiere")
-    .trim()
-    .notEmpty()
-    .withMessage("Premiere movie is required.")
-    .run(req);
-
-  await check("seat")
-    .trim()
-    .notEmpty()
-    .withMessage("Seat is required.")
-    .run(req);
-
-  await check("firstname")
-    .trim()
-    .notEmpty()
-    .withMessage("Firstname is required.")
-    .isLength({ min: 3 })
-    .withMessage("Firstname must have minimum length of 3.")
-    .run(req);
-
-  await check("lastname")
-    .trim()
-    .notEmpty()
-    .withMessage("Lastname is required.")
-    .isLength({ min: 3 })
-    .withMessage("Lastname must have minimum length of 3.")
-    .run(req);
-
-  await check("reserv_date")
-    .trim()
-    .notEmpty()
-    .withMessage("Date of reservation is required.")
-    .isISO8601()
-    .toDate()
-    .withMessage("Wrong date format.")
-    .run(req);
-
-  await check("total_price")
-    .trim()
-    .notEmpty()
-    .withMessage("Total price is required.")
-    .isNumeric()
-    .withMessage("Unknown format.")
-    .run(req);
-
-  await check("user_type")
-    .trim()
-    .notEmpty()
-    .withMessage("User type price is required.")
-    .isIn(["copil", "minor", "adult"])
-    .withMessage("Undefined user type.")
-    .run(req);
-
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ error: errors.array() });
-  }
-  if (req.body.premiere) {
-    await Premieres.findOne({ _id: req.body.premiere })
-      .then((premiere) => {
-        if (!premiere || premiere.active === false) {
-          return res
-            .status(404)
-            .json(
-              "The premiere of the selected movie is currently unavailable."
-            );
-        }
-      })
-      .catch(next);
-  }
-  if (req.body.seat) {
-    const reserv = await Reservations.findOne({
-      parent_user: req.decoded._id,
-      seat: req.body.seat,
-    }).exec();
-    await Seats.findById(req.body.seat)
-      .then((seat) => {
-        if (seat.available === false && seat._id === reserv.seat) {
-          console.log("reserv.seat", reserv.seat);
-          console.log("seat._id", seat._id);
-          //console.log("decoded", req.decoded);
-          return res.status(404).json("Seat is taken!!!");
-        } else {
-          req.seat = seat;
-          next();
-        }
-      })
-      .catch(next);
-  } else {
-    next();
-  }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//------------------------------------------------------------------------------------------//
 const checkReservationExists = async (req, res, next) => {
   Reservations.findById(req.params.reservation_id)
     .then((reservation) => {
@@ -204,6 +90,7 @@ const checkReservationExists = async (req, res, next) => {
     .catch(next);
 };
 
+//------------------------------------------------------------------------------------------//
 const restrictedReservation = async (req, res, next) => {
   Users.findById(req.body.parent_user)
     .exec()
@@ -211,26 +98,27 @@ const restrictedReservation = async (req, res, next) => {
       console.log(user);
     });
 };
-
-const checkPermiereExists = async (req, res, next) => {
-  const date = new Date("2021-01-02");
-
-  // console.log(req.body.premiere);
-  Premieres.findOne({ _id: req.body.premiere })
+//------------------------------------------------------------------------------------------//
+const checkSeatIsAvailable = async (req, res, next) => {
+  Reservations.findOne({
+    premiere: req.body.premiere,
+    seat: req.body.seat,
+    reserv_date: req.body.reserv_date,
+    reserv_hour: req.body.reserv_hour,
+  })
     .exec()
-    .then((premiere) => {
-      if (
-        premiere.premiere_start_date <= date &&
-        premiere.premiere_end_date >= date
-      ) {
-        console.log("Succes", date);
+    .then((reservation) => {
+      if (reservation) {
+        return res.status(422).json(`Sorry, seat ${req.body.seat} is taken !`);
+      } else {
+        next();
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {
   validateNewReservation,
-  validateReservationOnChange,
   checkReservationExists,
-  checkPermiereExists,
+  checkSeatIsAvailable,
 };

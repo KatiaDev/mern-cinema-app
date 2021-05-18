@@ -4,8 +4,7 @@ const Seats = require("../seat/model");
 const {
   checkReservationExists,
   validateNewReservation,
-  validateReservationOnChange,
-  checkPermiereExists,
+  checkSeatIsAvailable,
 } = require("./middleware");
 const {
   registeredAccess,
@@ -78,29 +77,22 @@ router.get(
 
 router.post(
   "/",
-  //registeredAccess,
-  // validateNewReservation,
-  checkPermiereExists,
+  registeredAccess,
+  validateNewReservation,
+  checkSeatIsAvailable,
   async (req, res, next) => {
-    //   new Reservations({ parent_id: req.decoded._id, ...req.body })
-    //     .save()
-    //     .then((newReservation) => {
-    //       res.status(201).json(newReservation);
-    //     })
-    //     .catch(next);
-    //   Seats.findByIdAndUpdate({ _id: req.body.seat }, { available: false })
-    //     .exec()
-    //     .then((updatedSeat) => {
-    //       console.log("before change -> available: ", updatedSeat.available);
-    //     })
-    //     .catch(next);
+    new Reservations({ parent_user: req.decoded._id, ...req.body })
+      .save()
+      .then((newReservation) => {
+        res.status(201).json(newReservation);
+      })
+      .catch(next);
   }
 );
 
 router.put(
   "/:reservation_id",
   registeredAccess,
-  validateReservationOnChange,
   checkReservationExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
@@ -114,12 +106,6 @@ router.put(
       .exec()
       .then((updatedReservation) => {
         res.status(200).json(updatedReservation);
-      })
-      .catch(next);
-    Seats.findByIdAndUpdate({ _id: req.body.seat }, { available: false })
-      .exec()
-      .then((updatedSeat) => {
-        console.log("before change -> available: ", updatedSeat.available);
       })
       .catch(next);
   }

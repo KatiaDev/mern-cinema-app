@@ -8,11 +8,13 @@ const reservationSchema = new mongoose.Schema(
       require: true,
     },
 
-    seat: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Seats",
-      require: true,
-    },
+    seat: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Seats",
+        require: true,
+      },
+    ],
 
     parent_user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,16 +24,19 @@ const reservationSchema = new mongoose.Schema(
 
     other_client: [
       {
-        age_category: {
-          type: String,
-          enum: ["Minor", "Adolescent", "Adult"],
-          require: true,
-        },
+        type: String,
+        enum: ["Minor", "Adolescent", "Adult"],
+        require: true,
       },
     ],
 
     reserv_date: {
       type: Date,
+      required: true,
+    },
+
+    reserv_hour: {
+      type: String,
       required: true,
     },
 
