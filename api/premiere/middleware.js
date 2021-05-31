@@ -34,12 +34,6 @@ const validateNewPremiere = async (req, res, next) => {
     })
     .run(req);
 
-  await check("premiere_date")
-    .notEmpty()
-    .isArray({ min: 1 })
-    .withMessage("Date of premiere is required.")
-    .run(req);
-
   await check("price")
     .trim()
     .notEmpty()
@@ -63,7 +57,7 @@ const validateNewPremiere = async (req, res, next) => {
 };
 
 const checkPremiereExists = async (req, res, next) => {
-  Premieres.findOne({ _id: req.params.premiere_id, acive: true })
+  Premieres.findOne({ _id: req.params.premiere_id })
     .then((premiere) => {
       if (!premiere) {
         return res.status(404).json(" Premiere is not found. ");

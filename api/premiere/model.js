@@ -21,15 +21,15 @@ const premiereSchema = new mongoose.Schema(
       required: true,
     },
 
-    interval_hours: [],
+    interval_hours: [
+      {
+        type: String,
+        require: true,
+      },
+    ],
     price: {
       type: Number,
       require: true,
-    },
-    active: {
-      type: Boolean,
-      require: true,
-      default: true,
     },
   },
   {

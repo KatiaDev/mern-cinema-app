@@ -15,7 +15,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
-  Premieres.findById(req.params.premiere_id)
+  Premieres.findOne({ _id: req.params.premiere_id })
     .populate("movie", "title -_id")
     .populate("cinema", "name -_id")
     .exec()
