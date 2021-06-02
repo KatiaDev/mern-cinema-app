@@ -1,7 +1,8 @@
 const Users = require("../user/model");
+const Notifications = require("../notification/model");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
-
+const { notificationSendEmail } = require("../../services/email/message");
 const registeredAccess = async (req, res, next) => {
   const token = req.cookies.token;
 
@@ -97,7 +98,6 @@ const checkUserRegister = async (req, res, next) => {
 
 //----------------------------------------------------------------------------------------------//
 
-
 const validateUserIdentity = async (req, res, next) => {
   console.log("Decoded", req.decoded);
   console.log("Params", req.params.user_id);
@@ -126,10 +126,41 @@ const сheckConfirmationRegister = async (req, res, next) => {
     });
 };
 
+// acest middleware "validateUserOnPasswordReset" cauta user-ul in baza de date, conform email-ului furnizat.
+// daca il gaseste => trimite mesaj cu linkul de resetare a parolei, daca nu => message: "You don`t have account"
+
+const validateUserOnPasswordReset = async (req, res, next) => {
+  await Users.findOne({ email: req.body.email, status: "Active" })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: "You don't have acount." });
+      } else {
+        req.user = user;
+        new Notifications({
+          title: "Resetarea Parolei",
+          content: "Apasati pe link-ul de mai jos pentru a reseta parola.",
+          notification_type: "Reset",
+        })
+          .save()
+          .then((newNotification) => {
+            notificationSendEmail(
+              req.user.email,
+              newNotification.title,
+              newNotification.content
+            );
+          });
+
+        next();
+      }
+    });
+};
+
 module.exports = {
   registeredAccess,
   checkUserRegister,
   staffAccess,
   validateUserIdentity,
   сheckConfirmationRegister,
+  validateUserOnPasswordReset,
 };
