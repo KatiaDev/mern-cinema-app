@@ -4,6 +4,7 @@ const { validateNewUser } = require("../user/middleware");
 const {
   checkUserRegister,
   сheckConfirmationRegister,
+  validateUserOnPasswordReset,
 } = require("./middleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -94,6 +95,29 @@ router.post(
             .json("Your account was successfully activated.");
         });
     }
+  }
+);
+
+// password reset route
+router.patch(
+  "/reset-password",
+  validateUserOnPasswordReset,
+  async (req, res, next) => {
+    console.log("reset for user: ", req.user);
+    Users.findOneAndUpdate(
+      {
+        _id: req.user._id,
+      },
+      {
+        password: await bcrypt.hash(req.body.new_password, 14),
+      }
+    )
+      .exec()
+      .then((user) => {
+        res
+          .status(200)
+          .json({ message: "Parola dvs. a fost resetata cu succes." });
+      });
   }
 );
 
