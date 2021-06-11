@@ -57,9 +57,11 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
       expiresIn: "1d",
     }
   );
-  res.cookie("token", token);
+  //res.cookie("token", token);
 
-  return res.status(200).json("SignIn Successful, Welcome to Olymp Cinema !!!");
+  return res
+    .status(200)
+    .json({ message: "SignIn Successful, Welcome to Olymp Cinema !!!", token });
 });
 
 router.get("/logout", async (req, res, next) => {

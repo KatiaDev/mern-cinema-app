@@ -16,7 +16,8 @@ const mediaRouter = require("../cloudinary/router");
 const notificationRouter = require("./notification/router");
 const authRouter = require("./auth/router");
 const cookieParser = require("cookie-parser");
-
+const cors = require("cors");
+const helmet = require("helmet");
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -50,6 +51,8 @@ server.use(
     extended: true,
   })
 );
+server.use(helmet());
+server.use(cors());
 server.use("/api/auth", authRouter);
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
