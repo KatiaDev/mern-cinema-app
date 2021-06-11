@@ -3,8 +3,9 @@ const Notifications = require("../notification/model");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const { notificationSendEmail } = require("../../services/email/message");
+
 const registeredAccess = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
@@ -23,7 +24,7 @@ const registeredAccess = async (req, res, next) => {
 //----------------------------------------------------------------------------------------------//
 
 const staffAccess = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });

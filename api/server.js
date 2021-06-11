@@ -16,6 +16,9 @@ const mediaRouter = require("../cloudinary/router");
 const notificationRouter = require("./notification/router");
 const authRouter = require("./auth/router");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
 const connectDB = async () => {
   try {
@@ -50,6 +53,9 @@ server.use(
     extended: true,
   })
 );
+server.use(helmet());
+server.use(cors());
+server.use(morgan("combined"));
 server.use("/api/auth", authRouter);
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
