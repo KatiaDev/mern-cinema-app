@@ -27,6 +27,9 @@ router.get(
   }
 );
 
+/// TEST ROUTE
+
+/*
 router.get(
   "/display/:movie_id",
   staffAccess,
@@ -44,7 +47,16 @@ router.get(
       })
       .catch(next);
   }
-);
+);*/
+
+router.post("/", staffAccess, validateMovie, async (req, res, next) => {
+  new Movies(req.body)
+    .save()
+    .then((newMovie) => {
+      res.status(201).json(newMovie);
+    })
+    .catch(next);
+});
 
 router.put(
   "/:movie_id",
@@ -64,50 +76,6 @@ router.put(
       .catch(next);
   }
 );
-
-router.post("/", staffAccess, validateMovie, async (req, res, next) => {
-  const { image_url, video_url } = req.body;
-
-  const cloudinaryImageUploadMethod = async (file) => {
-    return new Promise((resolve) => {
-      cloudinary.uploader.upload(
-        file,
-        {
-          folder: "movies",
-          use_filename: true,
-        },
-        (err, res) => {
-          if (err) return res.status(500).send("upload image error");
-          console.log(res.secure_url);
-          resolve(res.secure_url);
-        }
-      );
-    });
-  };
-  const imageLink = await cloudinaryImageUploadMethod(image_url);
-  cloudinary.uploader
-    .upload(video_url, {
-      resource_type: "video",
-      folder: "movies",
-      use_filename: true,
-      chunk_size: 6000000,
-    })
-    .then((result) => {
-      console.log("video:", result);
-      new Movies({
-        ...req.body,
-        image_url: imageLink,
-        video_url: result.secure_url,
-      })
-        .save()
-        .then((newMovie) => {
-          res.status(201).json(newMovie);
-        })
-        .catch(next);
-    })
-
-    .catch(next);
-});
 
 router.delete(
   "/:movie_id",

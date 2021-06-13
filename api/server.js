@@ -46,16 +46,17 @@ if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.log("cloudinary config:");
   console.log(cloudinary.config());
 }
-server.use(cookieParser());
-server.use(express.json());
-server.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+
 server.use(helmet());
 server.use(cors());
 server.use(morgan("combined"));
+server.use(cookieParser());
+server.use(express.json());
+/*server.use(
+  express.urlencoded({
+    extended: true,
+  })
+);*/
 server.use("/api/auth", authRouter);
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);
