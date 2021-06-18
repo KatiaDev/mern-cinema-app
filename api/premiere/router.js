@@ -5,6 +5,10 @@ const { staffAccess } = require("../auth/middleware");
 
 router.get("/", async (req, res, next) => {
   Premieres.find()
+    .populate(
+      "movie",
+      "title genre rating description actors duration image_url video_url -_id"
+    )
     .populate("cinema", "name -_id")
     .populate(
       "movie",
