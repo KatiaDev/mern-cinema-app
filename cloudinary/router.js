@@ -9,7 +9,12 @@ router.post("/api/image", async (req, res) => {
   };
 
   cloudinary.uploader
-    .upload(data.image)
+    .upload(data.image, {
+      resource_type: "auto",
+      folder: "movies",
+      use_filename: true,
+      unique_filename: false,
+    })
     .then((result) => {
       res.status(200).send({
         message: "success",
@@ -33,6 +38,8 @@ router.post("/api/video", async (req, res) => {
 
   cloudinary.uploader
     .upload(data.video, {
+      folder: "movies",
+      use_filename: true,
       resource_type: "video",
       chunk_size: 6000000,
     })
