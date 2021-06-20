@@ -25,7 +25,7 @@ const reservationSchema = new mongoose.Schema(
     other_client: [
       {
         type: String,
-        enum: ["Minor", "Adolescent", "Adult"],
+        enum: ["Copil", "Elev/Student", "Adult", "Pensionar"],
         require: true,
       },
     ],
