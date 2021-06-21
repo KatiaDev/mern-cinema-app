@@ -62,7 +62,11 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
 
   return res
     .status(200)
-    .json({ message: "SignIn Successful, Welcome to Olymp Cinema !!!", token });
+    .json({
+      message: "SignIn Successful, Welcome to Olymp Cinema !!!",
+      token,
+      role,
+    });
 });
 
 router.get("/logout", async (req, res, next) => {
