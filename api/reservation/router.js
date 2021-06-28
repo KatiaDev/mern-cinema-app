@@ -24,11 +24,30 @@ router.get("/", staffAccess, async (req, res, next) => {
 });
 
 router.get(
+  "/:premiere_id/reservation",
+  registeredAccess,
+  async (req, res, next) => {
+    console.log("A intrat in reservation_id", req.query);
+    Reservations.findOne({
+      premiere: req.params.premiere_id,
+      reserv_date: req.query.date,
+      reserv_hour: req.query.hour,
+    })
+      .populate("premiere")
+      .populate("seats")
+      .exec()
+      .then((reservations) => {
+        res.status(200).json(reservations);
+      })
+      .catch(next);
+  }
+);
+
+router.get(
   "/:reservation_id",
   staffAccess,
   checkReservationExists,
   async (req, res, next) => {
-    console.log("A intrat in reservation_id");
     Reservations.findById(req.params.reservation_id)
       .populate("premiere", "-active")
       .populate("seat")
@@ -128,22 +147,6 @@ router.delete(
       .exec()
       .then((deletedReservation) => {
         res.status(200).json(deletedReservation);
-      })
-      .catch(next);
-  }
-);
-
-router.get(
-  "/:premiere_id",
-  registeredAccess,
-  validateUserIdentity,
-  async (req, res, next) => {
-    Reservations.find({ premiere: req.params.premiere_id })
-      .populate("premiere", "-active")
-      .populate("seat")
-      .exec()
-      .then((reservations) => {
-        res.status(200).json(reservations);
       })
       .catch(next);
   }

@@ -11,11 +11,7 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Premiere movie is required.")
     .run(req);
 
-  await check("seat")
-    .trim()
-    .notEmpty()
-    .withMessage("Seat is required.")
-    .run(req);
+  await check("seats").notEmpty().withMessage("Seat is required.").run(req);
 
   await check("reserv_date")
     .trim()
@@ -109,7 +105,7 @@ const checkSeatIsAvailable = async (req, res, next) => {
     .exec()
     .then((reservation) => {
       if (reservation) {
-        return res.status(422).json(`Sorry, seat ${req.body.seat} is taken !`);
+        return res.status(422).json(`Sorry, seat ${req.body.seats} is taken !`);
       } else {
         next();
       }

@@ -8,8 +8,8 @@ const reservationSchema = new mongoose.Schema(
       require: true,
     },
 
-    seat: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Seats", require: true },
+    seats: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Seats" },
     ],
 
     parent_user: {
