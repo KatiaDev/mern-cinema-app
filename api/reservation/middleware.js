@@ -34,12 +34,12 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Unknown format.")
     .run(req);
 
-  await check("other_client")
+  await check("client_type")
     .trim()
     .notEmpty()
-    .withMessage("User type price is required.")
-    .isIn(["Minor", "Adolescent", "Adult"])
-    .withMessage("Undefined age category.")
+    .withMessage("Client type  is required.")
+    .isIn(["Copil", "Elev", "Student", "Adult", "Pensionar"])
+    .withMessage("Undefined client type.")
     .run(req);
 
   const errors = validationResult(req);
