@@ -21,7 +21,7 @@ const validateSeat = async (req, res, next) => {
   await check("seat_type")
     .notEmpty()
     .withMessage("Seat type field can't be empty.")
-    .isIn(["Platou", "Premium", "Balcon", "Logie Stanga", "Logie Dreapta"])
+    .isIn(["Gold", "Standart", "Econom"])
     .withMessage("Invalid seat type.")
     .run(req);
 

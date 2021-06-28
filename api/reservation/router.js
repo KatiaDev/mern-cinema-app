@@ -40,7 +40,7 @@ router.get(
   }
 );
 router.get(
-  "/:user_id/reservations",
+  "/:user_id",
   registeredAccess,
   validateUserIdentity,
   async (req, res, next) => {
@@ -128,6 +128,22 @@ router.delete(
       .exec()
       .then((deletedReservation) => {
         res.status(200).json(deletedReservation);
+      })
+      .catch(next);
+  }
+);
+
+router.get(
+  "/:premiere_id",
+  registeredAccess,
+  validateUserIdentity,
+  async (req, res, next) => {
+    Reservations.find({ premiere: req.params.premiere_id })
+      .populate("premiere", "-active")
+      .populate("seat")
+      .exec()
+      .then((reservations) => {
+        res.status(200).json(reservations);
       })
       .catch(next);
   }
