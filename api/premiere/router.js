@@ -5,7 +5,7 @@ const { staffAccess } = require("../auth/middleware");
 
 router.get("/", async (req, res, next) => {
   Premieres.find()
-    .populate("movie", "title -_id")
+    .populate("movie", "title genre rating description actors duration image_url video_url -_id")
     .populate("cinema", "name -_id")
     .exec()
     .then((premieres) => {
@@ -16,7 +16,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:premiere_id", checkPremiereExists, async (req, res, next) => {
   Premieres.findOne({ _id: req.params.premiere_id })
-    .populate("movie", "title -_id")
+    .populate("movie", "title genre rating description actors duration image_url video_url -_id")
     .populate("cinema", "name -_id")
     .exec()
     .then((premiere) => {

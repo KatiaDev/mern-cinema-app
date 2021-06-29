@@ -18,6 +18,8 @@ const authRouter = require("./auth/router");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const helmet = require("helmet");
+const morgan = require("morgan");
+
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -44,15 +46,17 @@ if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.log("cloudinary config:");
   console.log(cloudinary.config());
 }
+
+server.use(helmet());
+server.use(cors());
+server.use(morgan("combined"));
 server.use(cookieParser());
 server.use(express.json());
-server.use(
+/*server.use(
   express.urlencoded({
     extended: true,
   })
-);
-server.use(helmet());
-server.use(cors());
+);*/
 server.use("/api/auth", authRouter);
 server.use("/api/movies", movieRouter);
 server.use("/api/cinemas", cinemaRouter);

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Users = require("../user/model");
 const { validateNewUser } = require("../user/middleware");
 const {
+  registeredAccess,
   checkUserRegister,
   сheckConfirmationRegister,
   validateUserOnPasswordReset,
@@ -66,11 +67,14 @@ router.post("/login", checkUserRegister, async (req, res, next) => {
 
 router.get("/logout", async (req, res, next) => {
   try {
-    res.clearCookie("token");
     res.status(200).json("Logout successful !!!");
   } catch (error) {
     next();
   }
+});
+
+router.get("/check-auth", registeredAccess, (req, res) => {
+  res.status(200).json({ message: "Logged in." });
 });
 
 router.post(
