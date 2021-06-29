@@ -24,19 +24,30 @@ router.get("/", staffAccess, async (req, res, next) => {
 });
 
 router.get(
-  "/:premiere_id/reservation",
+  "/:premiere_id/:cinema_id/:hall_id",
   registeredAccess,
   async (req, res, next) => {
-    console.log("A intrat in reservation_id", req.query);
+    console.log("A intrat in reservation QUERY  = ", req.query);
+    console.log("A intrat in reservation PARAMS  = ", req.params);
+
     Reservations.findOne({
       premiere: req.params.premiere_id,
       reserv_date: req.query.date,
       reserv_hour: req.query.hour,
     })
-      .populate("premiere")
-      .populate("seats")
+      .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
+
+      .populate({ path: "seats", match: { hall: req.params.hall_id } })
+
       .exec()
       .then((reservations) => {
+        if (
+          Object.keys(reservations.seats).length <=0 ||
+          !reservations.premiere
+        ) {
+          res.status(404).json("Not found");
+        }
+
         res.status(200).json(reservations);
       })
       .catch(next);
