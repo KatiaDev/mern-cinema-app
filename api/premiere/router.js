@@ -10,6 +10,7 @@ router.get("/", async (req, res, next) => {
       "title genre rating description actors duration image_url video_url -_id"
     )
     .populate("cinema", "name -_id")
+    .populate("hall", "name -_id")
     .populate(
       "movie",
       "title original_title genre director release_date rating description actors duration age_restrict image_url video_url -_id"

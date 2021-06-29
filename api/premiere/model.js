@@ -7,11 +7,19 @@ const premiereSchema = new mongoose.Schema(
       ref: "Movies",
     },
 
-    cinema: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cinemas",
-    }],
-    
+    cinema: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cinemas",
+      },
+    ],
+    hall: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Halls",
+      },
+    ],
+
     premiere_start_date: {
       type: Date,
       required: true,
