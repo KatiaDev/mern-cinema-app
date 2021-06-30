@@ -11,11 +11,7 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Premiere movie is required.")
     .run(req);
 
-  await check("seat")
-    .trim()
-    .notEmpty()
-    .withMessage("Seat is required.")
-    .run(req);
+  await check("seats").notEmpty().withMessage("Seat is required.").run(req);
 
   await check("reserv_date")
     .trim()
@@ -34,12 +30,12 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Unknown format.")
     .run(req);
 
-  await check("other_client")
+  await check("client_type")
     .trim()
     .notEmpty()
-    .withMessage("User type price is required.")
-    .isIn(["Minor", "Adolescent", "Adult"])
-    .withMessage("Undefined age category.")
+    .withMessage("Client type  is required.")
+    .isIn(["Copil", "Elev", "Student", "Adult", "Pensionar"])
+    .withMessage("Undefined client type.")
     .run(req);
 
   const errors = validationResult(req);
@@ -109,7 +105,7 @@ const checkSeatIsAvailable = async (req, res, next) => {
     .exec()
     .then((reservation) => {
       if (reservation) {
-        return res.status(422).json(`Sorry, seat ${req.body.seat} is taken !`);
+        return res.status(422).json(`Sorry, seat ${req.body.seats} is taken !`);
       } else {
         next();
       }

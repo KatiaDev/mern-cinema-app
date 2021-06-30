@@ -15,6 +15,10 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    checked: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -4,9 +4,10 @@ const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const { notificationSendEmail } = require("../../services/email/message");
 
-const registeredAccess = async (req, res, next) => {
+const registeredAccess = async (req, res, next) => { 
+    
   const token = req.headers.authorization;
-
+  console.log(req.headers);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
   }
