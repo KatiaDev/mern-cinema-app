@@ -41,14 +41,11 @@ router.get(
 
       .exec()
       .then((reservations) => {
-        if (
-          Object.keys(reservations.seats).length <=0 ||
-          !reservations.premiere
-        ) {
-          res.status(404).json("Not found");
+        console.log("reser", reservations);
+        if (reservations) {
+          return res.status(200).json(reservations);
         }
-
-        res.status(200).json(reservations);
+        return res.status(404).json("Not found");
       })
       .catch(next);
   }
