@@ -41,14 +41,10 @@ router.get(
 
       .exec()
       .then((reservations) => {
-        if (
-          Object.keys(reservations.seats).length <=0 ||
-          !reservations.premiere
-        ) {
-          res.status(404).json("Not found");
+        if (reservations) {
+          res.status(200).json(reservations);
         }
-
-        res.status(200).json(reservations);
+        res.status(404).json("Not found");
       })
       .catch(next);
   }
@@ -99,7 +95,10 @@ router.get(
       .populate("seat")
       .exec()
       .then((reservation) => {
-        res.status(200).json(reservation);
+        if (reservation) {
+          res.status(200).json(reservation);
+        }
+        return res.status(404).json("Not found.");
       })
       .catch(next);
   }
