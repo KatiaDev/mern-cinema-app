@@ -107,10 +107,17 @@ router.get(
 router.post(
   "/",
   registeredAccess,
-  validateNewReservation,
-  checkSeatIsAvailable,
+  // validateNewReservation,
+  // checkSeatIsAvailable,
   async (req, res, next) => {
-    new Reservations({ parent_user: req.decoded._id, ...req.body })
+    new Reservations({
+      parent_user: req.decoded._id,
+      seats: req.body.seats,
+      premiere: req.body.premiere,
+      reserv_date: req.body.reserv_date,
+      reserv_hour: req.body.reserv_hour,
+      total_price: req.body.total_price,
+    })
       .save()
       .then((newReservation) => {
         res.status(201).json(newReservation);
