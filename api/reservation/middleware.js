@@ -30,13 +30,13 @@ const validateNewReservation = async (req, res, next) => {
     .withMessage("Unknown format.")
     .run(req);
 
-  await check("client_type")
-    .trim()
-    .notEmpty()
-    .withMessage("Client type  is required.")
-    .isIn(["Copil", "Elev", "Student", "Adult", "Pensionar"])
-    .withMessage("Undefined client type.")
-    .run(req);
+  // await check("client_type")
+  //   .trim()
+  //   .notEmpty()
+  //   .withMessage("Client type  is required.")
+  //   .isIn(["Copil", "Elev", "Student", "Adult", "Pensionar"])
+  //   .withMessage("Undefined client type.")
+  //   .run(req);
 
   const errors = validationResult(req);
 

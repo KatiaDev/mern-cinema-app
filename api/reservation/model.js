@@ -8,17 +8,20 @@ const reservationSchema = new mongoose.Schema(
       require: true,
     },
 
-    seats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Seats" }],
+    seats: [
+      {
+        seat: mongoose.Schema.Types.ObjectId,
+        client_type: {
+          type: String,
+          enum: ["Copil", "Elev", "Student", "Adult", "Pensionar"],
+          require: true,
+        },
+      },
+    ],
 
     parent_user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
-      require: true,
-    },
-
-    client_type: {
-      type: String,
-      enum: ["Copil", "Elev", "Student", "Adult", "Pensionar"],
       require: true,
     },
 
