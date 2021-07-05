@@ -27,25 +27,20 @@ router.get(
   "/:premiere_id/:cinema_id/:hall_id",
   registeredAccess,
   async (req, res, next) => {
-    console.log("A intrat in reservation QUERY  = ", req.query);
-    console.log("A intrat in reservation PARAMS  = ", req.params);
-
-    Reservations.findOne({
+    Reservations.find({
       premiere: req.params.premiere_id,
       reserv_date: req.query.date,
       reserv_hour: req.query.hour,
     })
-      .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
-
-      .populate({ path: "seats", match: { hall: req.params.hall_id } })
-
+      // .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
+      // .populate({ path: "seats", match: { hall: req.params.hall_id } })
+      .distinct("seats")
       .exec()
       .then((reservations) => {
-        console.log("reser", reservations);
         if (reservations) {
-          return res.status(200).json(reservations);
+          res.status(200).json(reservations);
         }
-        return res.status(404).json("Not found");
+        res.status(404).json("Not found");
       })
       .catch(next);
   }
@@ -96,7 +91,10 @@ router.get(
       .populate("seat")
       .exec()
       .then((reservation) => {
-        res.status(200).json(reservation);
+        if (reservation) {
+          res.status(200).json(reservation);
+        }
+        return res.status(404).json("Not found.");
       })
       .catch(next);
   }
@@ -105,10 +103,17 @@ router.get(
 router.post(
   "/",
   registeredAccess,
-  validateNewReservation,
-  checkSeatIsAvailable,
+  // validateNewReservation,
+  // checkSeatIsAvailable,
   async (req, res, next) => {
-    new Reservations({ parent_user: req.decoded._id, ...req.body })
+    new Reservations({
+      parent_user: req.decoded._id,
+      seats: req.body.seats,
+      premiere: req.body.premiere,
+      reserv_date: req.body.reserv_date,
+      reserv_hour: req.body.reserv_hour,
+      total_price: req.body.total_price,
+    })
       .save()
       .then((newReservation) => {
         res.status(201).json(newReservation);
