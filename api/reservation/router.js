@@ -27,18 +27,14 @@ router.get(
   "/:premiere_id/:cinema_id/:hall_id",
   registeredAccess,
   async (req, res, next) => {
-    console.log("A intrat in reservation QUERY  = ", req.query);
-    console.log("A intrat in reservation PARAMS  = ", req.params);
-
-    Reservations.findOne({
+    Reservations.find({
       premiere: req.params.premiere_id,
       reserv_date: req.query.date,
       reserv_hour: req.query.hour,
     })
-      .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
-
-      .populate({ path: "seats", match: { hall: req.params.hall_id } })
-
+      // .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
+      // .populate({ path: "seats", match: { hall: req.params.hall_id } })
+      .distinct("seats")
       .exec()
       .then((reservations) => {
         if (reservations) {
