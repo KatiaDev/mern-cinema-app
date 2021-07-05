@@ -65,7 +65,9 @@ router.put(
   checkMovieExists,
   async (req, res, next) => {
     const bodyReducer = Object.keys(req.body).reduce((acc, curr) => {
-      acc[curr] = req.body[curr];
+      if (req.body[curr] && curr !== "_id") {
+        acc[curr] = req.body[curr];
+      }
       return acc;
     }, {});
     Movies.findByIdAndUpdate(req.params.movie_id, bodyReducer)
@@ -82,7 +84,7 @@ router.delete(
   staffAccess,
   checkMovieExists,
   async (req, res, next) => {
-    Movies.findByIdAndDelete(req.params.movie_id, { activ: false })
+    Movies.findByIdAndDelete(req.params.movie_id)
       .exec()
       .then((removeMovie) => {
         res.status(200).json(removeMovie);
