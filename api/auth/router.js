@@ -5,7 +5,7 @@ const {
   registeredAccess,
   checkUserRegister,
   сheckConfirmationRegister,
-  validateUserOnPasswordReset,
+  validateUserOnPasswordReset
 } = require("./middleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -38,36 +38,40 @@ router.post("/register", validateNewUser, async (req, res, next) => {
     .catch(next);
 });
 
-router.post("/login", checkUserRegister, async (req, res, next) => {
-  const { _id, email, username, password, role, status } = req.user;
+router.post(
+  "/login",
+  checkUserRegister,
+  async (req, res, next) => {
+    const { _id, email, username, password, role, status } = req.user;
 
-  const passwordValid = await bcrypt.compare(req.body.password, password);
-  if (!passwordValid) {
-    return res.status(401).json("Invalid credentials.");
-  }
 
-  const token = jwt.sign(
-    {
-      _id,
-      username,
-      email,
-      role,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1d",
+  
+    const passwordValid = await bcrypt.compare(req.body.password, password);
+    if (!passwordValid) {
+      return res.status(401).json("%Invalid credentials%");
     }
-  );
-  //res.cookie("token", token);
 
-  return res
-    .status(200)
-    .json({
+    const token = jwt.sign(
+      {
+        _id,
+        username,
+        email,
+        role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+    //res.cookie("token", token);
+
+    return res.status(200).json({
       message: "SignIn Successful, Welcome to Olymp Cinema !!!",
       token,
       role,
     });
-});
+  }
+);
 
 router.get("/logout", async (req, res, next) => {
   try {
