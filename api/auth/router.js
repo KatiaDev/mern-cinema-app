@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const Users = require("../user/model");
 const { validateNewUser } = require("../user/middleware");
+const Notifications = require("../notification/model");
+const { notificationSendEmail } = require("../../services/email/message");
 const {
   registeredAccess,
   checkUserRegister,
   сheckConfirmationRegister,
-  validateUserOnPasswordReset
+  validateUserOnPasswordReset,
 } = require("./middleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -16,7 +18,7 @@ const mongoose = require("mongoose");
 router.post("/register", validateNewUser, async (req, res, next) => {
   const { firstname, lastname, age, email, username, password, mobile } =
     req.body;
-
+  console.log("aici");
   new Users({
     firstname,
     lastname,
@@ -31,47 +33,44 @@ router.post("/register", validateNewUser, async (req, res, next) => {
       const newToken = twofactor.generateToken(process.env.SECRET_2FA);
       message.messageConfirmRegister(addedUser.email, addedUser._id, newToken);
       return res.status(200).send({
-        message: "User was registered successfully! Please check your email",
+        title: "Cod 200: Succes !!!",
+        body: "Înregistrare cu succes, vă rugăm să verificați poșta electronică timp de 30 minute pentru a finaliza înregistrarea.",
+        messageType: 200,
       });
       //return res.status(200).json(addedUser);
     })
     .catch(next);
 });
 
-router.post(
-  "/login",
-  checkUserRegister,
-  async (req, res, next) => {
-    const { _id, email, username, password, role, status } = req.user;
+router.post("/login", checkUserRegister, async (req, res, next) => {
+  console.log('a intrat',req.user)
+  const { _id, email, username, password, role, status } = req.user;
 
-
-  
-    const passwordValid = await bcrypt.compare(req.body.password, password);
-    if (!passwordValid) {
-      return res.status(401).json("%Invalid credentials%");
-    }
-
-    const token = jwt.sign(
-      {
-        _id,
-        username,
-        email,
-        role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
-    //res.cookie("token", token);
-
-    return res.status(200).json({
-      message: "SignIn Successful, Welcome to Olymp Cinema !!!",
-      token,
-      role,
-    });
+  const passwordValid = await bcrypt.compare(req.body.password, password);
+  if (!passwordValid) {
+    return res.status(401).json("%Invalid credentials%");
   }
-);
+
+  const token = jwt.sign(
+    {
+      _id,
+      username,
+      email,
+      role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1d",
+    }
+  );
+  //res.cookie("token", token);
+
+  return res.status(200).json({
+    message: "SignIn Successful, Welcome to Olymp Cinema !!!",
+    token,
+    role,
+  });
+});
 
 router.get("/logout", async (req, res, next) => {
   try {
@@ -81,11 +80,15 @@ router.get("/logout", async (req, res, next) => {
   }
 });
 
-router.get("/check-auth", registeredAccess, (req, res) => {
-  res.status(200).json({ message: "Logged in." });
+router.get("/check-auth", registeredAccess, async (req, res) => {
+  console.log(req.decoded);
+  res.status(200).json({
+    isAuthenticated: true,
+    isAdmin: req.decoded.role === 0 ? false : true,
+  });
 });
 
-router.post(
+router.get(
   "/register-confirm/:token/:user_id",
   сheckConfirmationRegister,
   async (req, res, next) => {
@@ -94,9 +97,10 @@ router.post(
       req.params.token,
       (window = 35) //minut
     );
-    console.log(result);
 
     if (!result || !mongoose.Types.ObjectId.isValid(req.params.user_id)) {
+      //Daca el primeste erorare la token atunci stergem userul din baza.
+
       return res.status(500).json("Sorry, invalid token.");
     } else {
       await Users.findByIdAndUpdate(req.params.user_id, {
@@ -104,9 +108,7 @@ router.post(
       })
         .exec()
         .then((user) => {
-          return res
-            .status(200)
-            .json("Your account was successfully activated.");
+          return res.status(200).redirect("http://localhost:3000/login");
         });
     }
   }
@@ -117,7 +119,7 @@ router.patch(
   "/reset-password",
   validateUserOnPasswordReset,
   async (req, res, next) => {
-    console.log("reset for user: ", req.user);
+    console.log("reset for user: ", req.body);
     Users.findOneAndUpdate(
       {
         _id: req.user._id,
@@ -134,5 +136,40 @@ router.patch(
       });
   }
 );
+
+router.post("/request/reset-password", async (req, res, next) => {
+  console.log("email", req.body.email);
+  await Users.findOne({ email: req.body.email, status: "Active" })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          title: "Cod 404: Eroare !!!",
+          body: "Utilizator cu adresa indicată nu a fost identificat în sistem",
+          messageType: 404,
+        });
+      } else {
+        req.user = user;
+        new Notifications({
+          title: "Resetarea Parolei",
+          content: "Apasati pe link-ul de mai jos pentru a reseta parola.",
+          notification_type: "Reset",
+        })
+          .save()
+          .then((newNotification) => {
+            notificationSendEmail(
+              req.user.email,
+              newNotification.title,
+              newNotification.content
+            );
+          });
+        return res.status(200).json({
+          title: "Cod 200: Succes !!!",
+          body: "Pe adresa indicată a fost expediată instrucțiunile  de resetare a parolei. Verificați vă rog poșta electronică !",
+          messageType: 200,
+        });
+      }
+    });
+});
 
 module.exports = router;
