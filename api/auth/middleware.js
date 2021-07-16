@@ -2,7 +2,6 @@ const Users = require("../user/model");
 const Notifications = require("../notification/model");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
-const { notificationSendEmail } = require("../../services/email/message");
 
 const registeredAccess = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -17,7 +16,17 @@ const registeredAccess = async (req, res, next) => {
         .status(401)
         .json({ message: "Token invalid, please SignIn !!!" });
     }
+    const { _id, email, role } = decoded;
+    Users.findOne({ _id, email, role })
+      .exec()
+      .then((user) => {
+        if (!user) {
+          res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
+        }
+      });
+
     req.decoded = decoded;
+
     next();
   });
 };
@@ -51,32 +60,23 @@ const staffAccess = async (req, res, next) => {
 const checkUserRegister = async (req, res, next) => {
   //----------------------Password--------------------------------------------------//
   await check("password")
-    .trim()
     .notEmpty()
     .withMessage("%Password is required%")
     .run(req);
 
-    await check("email")
-    .trim()
-    .notEmpty()
-    .withMessage("%Email is required%")
-    .run(req);
-
+  await check("email").notEmpty().withMessage("%Email is required%").run(req);
 
   await check("password")
-    .trim()
     .isLength({ min: 8, max: 15 })
     .withMessage("%Your password should have min and max length between 8-15%")
     .run(req);
 
   await check("password")
-    .trim()
     .matches(/\d/)
     .withMessage("%Your password should have at least one number%")
     .run(req);
 
   await check("password")
-    .trim()
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("%Your password should have at least one special character%")
     .run(req);
@@ -84,8 +84,25 @@ const checkUserRegister = async (req, res, next) => {
 
   await check("email")
     .isEmail()
-    .normalizeEmail()
     .withMessage("%The specified email does not match the rules%")
+    .run(req);
+
+  await check("email")
+    .custom((email) => {
+      return Users.findOne({
+        email,
+      }).then((user) => {
+        if (user.status === "Active") {
+          req.user = user;
+        } else if (user.status === "Pending") {
+          return res
+            .status(401)
+            .json("%Pending Account.Please verify your email!%");
+        } else {
+          return res.status(404).json("%Account not exist%");
+        }
+      });
+    })
     .run(req);
 
   const errors = validationResult(req);
@@ -97,31 +114,9 @@ const checkUserRegister = async (req, res, next) => {
 
     return res.status(400).json(errorMessage);
   } else {
-    await Users.findOne({
-      email: req.body.email,
-      status: "Active",
-    })
-      .exec()
-      .then((user) => {
-        if (user) {
-          req.user = user;
-        } else if (user && user.status === "Pending") {
-          return res
-            .status(401)
-            .json("%Pending Account.Please verify your email!%");
-        } else {
-          return res
-            .status(404)
-            .json("%You do not have a profile. Please Register%");
-        }
-        
-      });
-      next();
-    
+    next();
   }
 };
-
-//----------------------------------------------------------------------------------------------//
 
 const validateUserIdentity = async (req, res, next) => {
   console.log("Decoded", req.decoded);
@@ -155,6 +150,7 @@ const сheckConfirmationRegister = async (req, res, next) => {
 // daca il gaseste => trimite mesaj cu linkul de resetare a parolei, daca nu => message: "You don`t have account"
 
 const validateUserOnPasswordReset = async (req, res, next) => {
+  console.log("email", req.body.email);
   await Users.findOne({ email: req.body.email, status: "Active" })
     .exec()
     .then((user) => {
@@ -179,27 +175,6 @@ const validateUserOnPasswordReset = async (req, res, next) => {
         next();
       }
     });
-
-  const checkStatusUser = async (req, res, next) => {
-    await Users.findOne({
-      email: req.body.email,
-      status: "Active",
-    })
-      .exec()
-      .then((user) => {
-        if (user) {
-          req.user = user;
-        } else if (user && user.status === "Pending") {
-          return res
-            .status(401)
-            .json("%Pending Account.Please verify your email!%");
-        } else {
-          return res
-            .status(404)
-            .json("%You do not have a profile. Please Register%");
-        }
-      });
-  };
 };
 
 module.exports = {
@@ -209,5 +184,4 @@ module.exports = {
   validateUserIdentity,
   сheckConfirmationRegister,
   validateUserOnPasswordReset,
-
 };

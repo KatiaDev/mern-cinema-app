@@ -3,7 +3,7 @@ const Seats = require("./model");
 const { validateSeat, checkSeatExists } = require("./middleware");
 const { registeredAccess, staffAccess } = require("../auth/middleware");
 
-router.get("/", staffAccess, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const seats = await Seats.find().exec();
     res.status(200).json(seats);
