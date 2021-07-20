@@ -2,12 +2,13 @@ const router = require("express").Router();
 const Users = require("../user/model");
 const { validateNewUser } = require("../user/middleware");
 const Notifications = require("../notification/model");
-const { notificationSendEmail } = require("../../services/email/message");
+const { messageResetPassword } = require("../../services/email/message");
 const {
   registeredAccess,
   checkUserRegister,
   сheckConfirmationRegister,
-  validateUserOnPasswordReset,
+  //validateUserOnPasswordReset,
+  checkUserExist,
 } = require("./middleware");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -43,7 +44,7 @@ router.post("/register", validateNewUser, async (req, res, next) => {
 });
 
 router.post("/login", checkUserRegister, async (req, res, next) => {
-  console.log('a intrat',req.user)
+  console.log("a intrat", req.user);
   const { _id, email, username, password, role, status } = req.user;
 
   const passwordValid = await bcrypt.compare(req.body.password, password);
@@ -117,12 +118,12 @@ router.get(
 // password reset route
 router.patch(
   "/reset-password",
-  validateUserOnPasswordReset,
+  checkUserExist,
+
   async (req, res, next) => {
-    console.log("reset for user: ", req.body);
     Users.findOneAndUpdate(
       {
-        _id: req.user._id,
+        _id: req.body.user_id,
       },
       {
         password: await bcrypt.hash(req.body.new_password, 14),
@@ -130,9 +131,10 @@ router.patch(
     )
       .exec()
       .then((user) => {
-        res
-          .status(200)
-          .json({ message: "Parola dvs. a fost resetata cu succes." });
+        if (!user) {
+          return res.status(404).json({ message: "error" });
+        }
+        return res.status(200).json({ message: user });
       });
   }
 );
@@ -150,18 +152,16 @@ router.post("/request/reset-password", async (req, res, next) => {
         });
       } else {
         req.user = user;
+
         new Notifications({
           title: "Resetarea Parolei",
           content: "Apasati pe link-ul de mai jos pentru a reseta parola.",
           notification_type: "Reset",
+          users: req.user_id,
         })
           .save()
           .then((newNotification) => {
-            notificationSendEmail(
-              req.user.email,
-              newNotification.title,
-              newNotification.content
-            );
+            messageResetPassword(req.user.email, req.user._id);
           });
         return res.status(200).json({
           title: "Cod 200: Succes !!!",
