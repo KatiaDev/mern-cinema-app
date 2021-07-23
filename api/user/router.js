@@ -72,7 +72,7 @@ router.delete(
   }
 );
 
-////////////////////////////////// DELETE ALL USERS WITH status: Disable /////////////////////////////////////
+//--------------------------------- DELETE ALL USERS WITH status: Disable -------------------------------------//
 
 router.delete("/", staffAccess, async (req, res, next) => {
   const users = await Users.find({ status: "Disable" });
