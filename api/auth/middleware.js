@@ -5,7 +5,8 @@ const { check, validationResult } = require("express-validator");
 
 const registeredAccess = async (req, res, next) => {
   const token = req.headers.authorization;
-  console.log(req.headers);
+  //console.log(req.headers);
+
   if (!token) {
     return res.status(401).json({ message: "Unauthorized, please SignIn !!!" });
   }
@@ -16,7 +17,9 @@ const registeredAccess = async (req, res, next) => {
         .status(401)
         .json({ message: "Token invalid, please SignIn !!!" });
     }
+
     const { _id, email, role } = decoded;
+
     Users.findOne({ _id, email, role })
       .exec()
       .then((user) => {
@@ -58,7 +61,7 @@ const staffAccess = async (req, res, next) => {
 //----------------------------------------------------------------------------------------------//
 
 const checkUserRegister = async (req, res, next) => {
-  //----------------------Password--------------------------------------------------//
+  //----------------------Password-----------------------------------------//
   await check("password")
     .notEmpty()
     .withMessage("%Password is required%")
@@ -117,6 +120,8 @@ const checkUserRegister = async (req, res, next) => {
     next();
   }
 };
+
+//----------------------------------------------------------------------------------------------//
 
 const validateUserIdentity = async (req, res, next) => {
   console.log("Decoded", req.decoded);

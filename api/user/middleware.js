@@ -210,7 +210,7 @@ const validateUserOnChange = async (req, res, next) => {
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------------------------//
 
 const checkUserExists = async (req, res, next) => {
   Users.findOne({ _id: req.params.user_id, status: "Active" })
