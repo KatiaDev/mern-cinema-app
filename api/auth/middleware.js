@@ -151,36 +151,48 @@ const сheckConfirmationRegister = async (req, res, next) => {
     });
 };
 
-// acest middleware "validateUserOnPasswordReset" cauta user-ul in baza de date, conform email-ului furnizat.
-// daca il gaseste => trimite mesaj cu linkul de resetare a parolei, daca nu => message: "You don`t have account"
-
-const validateUserOnPasswordReset = async (req, res, next) => {
-  console.log("email", req.body.email);
-  await Users.findOne({ email: req.body.email, status: "Active" })
+const checkUserExist = async (req, res, next) => {
+  await Users.findOne({ _id: req.body.user_id, status: "Active" })
     .exec()
     .then((user) => {
       if (!user) {
-        return res.status(404).json({ message: "You don't have acount." });
-      } else {
-        req.user = user;
-        new Notifications({
-          title: "Resetarea Parolei",
-          content: "Apasati pe link-ul de mai jos pentru a reseta parola.",
-          notification_type: "Reset",
-        })
-          .save()
-          .then((newNotification) => {
-            notificationSendEmail(
-              req.user.email,
-              newNotification.title,
-              newNotification.content
-            );
-          });
-
-        next();
+        return res.status(404).json({ message: "Utilizator inexistent" });
       }
+      next();
     });
+ 
 };
+
+// acest middleware "validateUserOnPasswordReset" cauta user-ul in baza de date, conform email-ului furnizat.
+// daca il gaseste => trimite mesaj cu linkul de resetare a parolei, daca nu => message: "You don`t have account"
+
+// const validateUserOnPasswordReset = async (req, res, next) => {
+//   console.log("email", req.body.email);
+//   await Users.findOne({ email: req.body.email, status: "Active" })
+//     .exec()
+//     .then((user) => {
+//       if (!user) {
+//         return res.status(404).json({ message: "You don't have acount." });
+//       } else {
+//         req.user = user;
+//         new Notifications({
+//           title: "Resetarea Parolei",
+//           content: "Apasati pe link-ul de mai jos pentru a reseta parola.",
+//           notification_type: "Reset",
+//         })
+//           .save()
+//           .then((newNotification) => {
+//             notificationSendEmail(
+//               req.user.email,
+//               newNotification.title,
+//               newNotification.content
+//             );
+//           });
+
+//         next();
+//       }
+//    });
+//};
 
 module.exports = {
   registeredAccess,
@@ -188,5 +200,6 @@ module.exports = {
   staffAccess,
   validateUserIdentity,
   сheckConfirmationRegister,
-  validateUserOnPasswordReset,
+  //validateUserOnPasswordReset,
+  checkUserExist,
 };
