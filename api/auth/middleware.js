@@ -142,11 +142,8 @@ const сheckConfirmationRegister = async (req, res, next) => {
       if (!user) {
         next();
       } else {
-        return res
-          .status(500)
-          .json(
-            "%Account is already activated thanks for choosing Olymp Cinema%"
-          );
+        return res.sendFile("alerdayActivatedProfile.html", { root: "public" });
+        // "%Account is already activated thanks for choosing Olymp Cinema%"
       }
     });
 };
@@ -160,7 +157,6 @@ const checkUserExist = async (req, res, next) => {
       }
       next();
     });
- 
 };
 
 // acest middleware "validateUserOnPasswordReset" cauta user-ul in baza de date, conform email-ului furnizat.
