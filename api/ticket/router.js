@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Tickets = require("./model");
 const { checkTicketExists, validateNewTicket } = require("./middleware");
 const { registeredAccess, staffAccess } = require("../auth/middleware");
-
+const QRCode = require("qrcode");
 router.get("/", staffAccess, async (req, res, next) => {
   Tickets.find()
     .exec()
@@ -53,6 +53,10 @@ router.post(
   registeredAccess,
   validateNewTicket,
   async (req, res, next) => {
+    QRCode.toDataURL("Welcome to Olymp Cinema", (err, url) => {
+      console.log(url);
+    });
+
     new Tickets(req.body)
       .save()
       .then((newTicket) => {
