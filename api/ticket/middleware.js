@@ -2,14 +2,6 @@ const { check, validationResult } = require("express-validator");
 const Tickets = require("./model");
 
 const validateNewTicket = async (req, res, next) => {
-  await check("qrcode")
-    .trim()
-    .notEmpty()
-    .withMessage(" QR - Code is required.")
-    .isLength({ min: 24 })
-    .withMessage(" QR - Code is corrupt.")
-    .run(req);
-
   await check("pay_type")
     .trim()
     .notEmpty()
