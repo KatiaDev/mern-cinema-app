@@ -557,235 +557,245 @@ const messageResetPassword = async (email, user_id) => {
   return await configEmail.sendMail(msg);
 };
 
-const messageSendTicket = async () => {
+const messageSendTicket = async (
+  email,
+  seats,
+  premiere,
+  movie,
+  reservation,
+  cinema,
+  qrcode
+) => {
+  const fullDate = reservation.reserv_date;
+  const year = fullDate.getFullYear();
+  const month =
+    (fullDate.getMonth() + 1).toString().length === 1
+      ? "0" + (fullDate.getMonth() + 1)
+      : fullDate.getMonth() + 1;
+  const day =
+    fullDate.getDate().toString().length === 1
+      ? "0" + fullDate.getDate()
+      : fullDate.getDate();
+  const formatDate = day + "." + month + "." + year;
+
+  const tableInfo = seats.map((seat) => {
+    return ` <tr>
+    <td align="left" style="padding-top: 5px;">
+       <table cellspacing="0" cellpadding="0" border="0" width="100%">
+           <tr>
+              <td width="10%"  align="center"   style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">${
+                seat._id.seat_num
+              }</td>
+               <td width="25%"  align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">${
+                 seat._id.row_num
+               }</td>
+               <td width="18%"  align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">${
+                 seat._id.seat_type
+               }</td>
+               <td width="30%"  align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">${
+                 seat.client_type
+               }</td>
+               <td width="20%"   align="center"  style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">${
+                 seat._id.seat_price + premiere.price
+               }</td>
+           </tr>
+       </table>
+   </td>
+  </tr>`;
+  });
+
   const msg = {
     from: `"Olymp Cinema" <${process.env.EMAIL_PROFILE}>`,
     to: email,
-    subject: "Resetare parolă - Olymp Cinema",
+    subject: "Ticket - Olymp Cinema",
     html: `
     <!DOCTYPE html>
-<html>
-
-<head>
-    <title></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-   <script>
+    <html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <style type="text/css">
+            body,
+            table,
+            td,
+            a {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+            }
     
-       
-   </script>
-    <style type="text/css">
-        body,
-        table,
-        td,
-        a {
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-        }
-
-        table,
-        td {
-            mso-table-lspace: 0pt;
-            mso-table-rspace: 0pt;
-        }
-
-        img {
-            -ms-interpolation-mode: bicubic;
-        }
-
-        img {
-            border: 0;
-            height: auto;
-            line-height: 100%;
-            outline: none;
-            text-decoration: none;
-        }
-
-        table {
-            border-collapse: collapse !important;
-        }
-
-        body {
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-        }
-
-        a[x-apple-data-detectors] {
-            color: inherit !important;
-            text-decoration: none !important;
-            font-size: inherit !important;
-            font-family: inherit !important;
-            font-weight: inherit !important;
-            line-height: inherit !important;
-        }
-
-        @media screen and (max-width: 480px) {
-            .mobile-hide {
-                display: none !important;
+            table,
+            td {
+                mso-table-lspace: 0pt;
+                mso-table-rspace: 0pt;
             }
-
-            .mobile-center {
-                text-align: center !important;
+    
+            img {
+                -ms-interpolation-mode: bicubic;
             }
-        }
-
-        div[style*="margin: 16px 0;"] {
-            margin: 0 !important;
-        }
-    </style>
-
-<body style="margin: 0 !important; padding: 0 !important; background-color: #eeeeee;" bgcolor="#eeeeee">
-    <div style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
-        For what reason would it be advisable for me to think about business content? That might be little bit risky to have crew member like them.
-    </div>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td align="center" style="background-color: #eeeeee;" bgcolor="#eeeeee">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-                    <tr>
-                        <td align="center" valign="top" style="font-size:0; padding: 35px;" bgcolor="#141414">
-                            <div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;">
-                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+    
+            img {
+                border: 0;
+                height: auto;
+                line-height: 100%;
+                outline: none;
+                text-decoration: none;
+            }
+    
+            table {
+                border-collapse: collapse !important;
+            }
+    
+            body {
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+    
+            a[x-apple-data-detectors] {
+                color: inherit !important;
+                text-decoration: none !important;
+                font-size: inherit !important;
+                font-family: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+            }
+    
+            @media screen and (max-width: 480px) {
+                .mobile-hide {
+                    display: none !important;
+                }
+    
+                .mobile-center {
+                    text-align: center !important;
+                }
+            }
+    
+            div[style*="margin: 16px 0;"] {
+                margin: 0 !important;
+            }
+        </style>
+    
+    <body style="margin: 0 !important; padding: 0 !important; background-color: #eeeeee;" bgcolor="#eeeeee">
+        <div style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
+            For what reason would it be advisable for me to think about business content? That might be little bit risky to have crew member like them.
+        </div>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td align="center" style="background-color: #eeeeee;" bgcolor="#eeeeee">
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+                        <tr>
+                            <td align="center" valign="top" style="font-size:0; padding: 35px;" bgcolor="#141414">
+                                <div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;">
+                                    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+                                        <tr>
+                                            <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800; line-height: 48px;" class="mobile-center">
+                                                <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #c1842b;">Ticket,<br>Olymp Cinema</h1>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;" class="mobile-hide">
+                                    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+                                        <tr>
+                                            <td align="right" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+                                                <table cellspacing="0" cellpadding="0" border="0" align="right">
+                                                    <tr>
+                                                        <td style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400;">
+                                                           
+                                                        </td>
+                                                        <td style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-weight: 600; line-height: 34px;"> <img src="https://res.cloudinary.com/olymp-cinema/image/upload/v1627318894/olymp-cinema-logo_bzk0zx.png" width="87" height="20" style="display: block; border: 0px;" /></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" style="padding: 35px 35px 20px 35px; background-color: #ffffff;" bgcolor="#ffffff">
+                                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
                                     <tr>
-                                        <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800; line-height: 48px;" class="mobile-center">
-                                            <h1 style="font-size: 28px; font-weight: 800; margin: 0; color: #c1842b;">Ticket,<br>Olymp Cinema</h1>
+                                        <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;"> 
+                                      
+                                        <img src=${movie.image_url} width="125" height="120" style="display: block; border: 0px;" /><br>
+                                            <h2 style="font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;">${movie.title}</h2>
                                         </td>
                                     </tr>
-                                </table>
-                            </div>
-                            <div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;" class="mobile-hide">
-                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
                                     <tr>
-                                        <td align="right" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
-                                            <table cellspacing="0" cellpadding="0" border="0" align="right">
+                                        <td align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 10px;">
+                                            <p style=" text-align:center; font-size: 16px; font-weight: 400; line-height: 24px; color: #777777;"> Vă aștepăm cu drag la vizionare, la data <b>${formatDate}</b>, ora <b>${reservation.reserv_hour}</b> în <b>Sala Mare</b> a cinematografului <b>${cinema[0].name}</b>, amplasat în <b>${cinema[0].address}.</b>  </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" style="padding-top: 20px;">
+                                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                                 <tr>
-                                                    <td style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400;">
-                                                       
-                                                    </td>
-                                                    <td style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-weight: 600; line-height: 34px;"> <img src="https://res.cloudinary.com/olymp-cinema/image/upload/v1627318894/olymp-cinema-logo_bzk0zx.png" width="87" height="20" style="display: block; border: 0px;" /></td>
+                                                    <td width="10%"  align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Locul</td>
+                                                    <td width="11%"  align="center" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Rîndul</td>
+                                                    <td width="20%"  align="center"  bgcolor="#eeeeee"  style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Categ. Loc</td>
+                                                    <td width="20%"  align="center" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Categ. Vîrstă</td>
+                                                    <td width="5%"   align="right" bgcolor="#eeeeee"  style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Achitat</td>
+                                                </tr>   
+                                            </table>
+                                        </td>
+                                    </tr>
+                                   ${tableInfo}
+                                    <tr>
+                                          <td align="left" style="padding-top: 5px;">
+                                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                <tr>
+                                                    <td width="85%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Total Achitat</td>
+                                                    <td width="25%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">${reservation.total_price} Lei </td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
                                 </table>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" style="padding: 35px 35px 20px 35px; background-color: #ffffff;" bgcolor="#ffffff">
-                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-                                <tr>
-                                    <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;"> 
-                                  
-                                    <img src="https://res.cloudinary.com/olymp-cinema/image/upload/v1625779819/movies/acletidsgwpdfg1tc4zu.jpg" width="125" height="120" style="display: block; border: 0px;" /><br>
-                                        <h2 style="font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;">Cruella</h2>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 10px;">
-                                        <p style=" text-align:center; font-size: 16px; font-weight: 400; line-height: 24px; color: #777777;"> Vă aștepăm cu drag la vizionare, la data <b>25.05.2021</b>, ora <b>16:00</b> în <b>Sala Mare</b> a cinematografului <b>Olymp Cinema</b>, amplasat în <b>mun.Chișinău, str. Mircea cel Bătrîn, 74/2.</b>  </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="left" style="padding-top: 20px;">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td width="75%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Nr. Loc</td>
-                                                <td width="25%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Categ. Vîrstă </td>
-                                            </tr>
-                                       
-                                           
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="left" style="padding-top: 20px;">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td width="85%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> Locul 7  </td>
-                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> Copil </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    
-                                </tr>
-                                <tr>
-                                    
-                                     <td align="left" style="padding-top: 20px;">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                  <td width="85%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> Locul 7  </td>
-                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 24px; padding: 5px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> Copil </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    
-                                    
-                                </tr>
-                                <tr>
-                                    
-                                    
-                                      <td align="left" style="padding-top: 20px;">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                         <td width="75%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;">Total</td>
-                                                <td width="25%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 800; line-height: 24px; padding: 10px;"> 525 Lei </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    
-                                    
-                                </tr>
-                                
-                                
-                                
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" height="100%" valign="top" width="100%" style="padding: 0 35px 35px 35px; background-color: #ffffff;" bgcolor="#ffffff">
-                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px;">
-                                <tr>
-                                    <td align="center" valign="top" style="font-size:0;">
-                                        <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
-                                            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
-                                                <tr>
-                                                    <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 5px;"> 
-                                                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOCSURBVO3BQW4kRwADwczC/P/LtA4+8FRAY0Zaec0I84WZfx1mymGmHGbKYaYcZsphphxmymGmHGbKYaYcZsphphxmymGmHGbKizep/KQkPKFyk4QnVG6S0FR+UhLecZgph5lymCkvPiwJn6TyhMoTKjdJuEnCE0n4JJVPOsyUw0w5zJQX30zliSQ8oXKThKbSknCj8p1UnkjCdzrMlMNMOcyUF3+ZJLxD5f/sMFMOM+UwU178ZVRaEloSnkjC/8lhphxmymGmvPhmSfhJSbhRuUnCjUpLwjuS8JscZsphphxmyosPU/lNVFoSmsqNSktCU2lJuFH5zQ4z5TBTDjPFfOE/TOUdSbhRuUnC3+QwUw4z5TBTzBfeoNKS0FQ+KQk3Ki0JT6i8IwlN5ZOS8J0OM+UwUw4z5cWbktBUbpJwo9KS8Ccl4UblJglNpSXhRuUnHWbKYaYcZor5whtUWhKeUGlJaCotCU+o/ElJeEKlJaGp3CThHYeZcpgph5ny4sNUWhKaSkvCTRKeUGlJaCotCU+ovEOlJaEl4U86zJTDTDnMlBdvSkJTaSpPqNwkoam0JDSVloSm8kQSnlC5UflNDjPlMFMOM8V84Q0qN0loKk8koak8kYTvpNKScKPSktBUWhJ+0mGmHGbKYaa8+LAk3CShqdyo3CThRuWJJDSVd6i0JNwkoak8kYR3HGbKYaYcZsqLb6bSktCS0FRaEppKU7lJQlNpSXhHEr5TEppKS8InHWbKYaYcZsqLH6byhMoTSWgqT6jcJKGpPKHySSotCe84zJTDTDnMlBdvSsJNEr6TyhNJaCo3SXgiCU+otCQ0lZ90mCmHmXKYKS/epPKTktCS0FSeSMKNSkvCEyotCb/ZYaYcZsphprz4sCR8ksqNSktCU7lRaUn4pCS8IwlNpSXhkw4z5TBTDjPlxTdTeSIJ71BpSXhC5UblRuUdKk+otCS84zBTDjPlMFNe/GWS8EQSnlBpSWgqN0loKi0JTeUnHWbKYaYcZsqLv4xKS0JTuUnCTRKaSktCU7lJwk0SblQ+6TBTDjPlMFNefLMkfKck3KjcJOFG5QmVloSm0pLwmxxmymGmHGbKiw9T+UkqN0loKk2lJaEl4QmVd6j8SYeZcpgph5livjDzr8NMOcyUw0w5zJTDTDnMlMNMOcyUw0w5zJTDTDnMlMNMOcyUw0z5B8umeyfheUIJAAAAAElFTkSuQmCC" width="250" height="10" style="display: block; border: 0px;" /><br>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" style=" padding: 35px; background-color: #141414;" bgcolor="#1b9ba3">
-                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-                                <tr>
-                                    <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
-                                        <h2 style="font-size: 20px; font-weight: 800; line-height: 30px; color: #c1842b; margin: 0;">Ticket-ul poate fi tipărit s-au prezentat în format electronic ! </h2>
-                                    </td>
-                                </tr>
-                              
-                            </table>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" height="100%" valign="top" width="100%" style="padding: 0 35px 35px 35px; background-color: #ffffff;" bgcolor="#ffffff">
+                                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px;">
+                                    <tr>
+                                        <td align="center" valign="top" style="font-size:0;">
+                                            <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
+                                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+                                                    <tr>
+                                                        <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 5px;"> 
+                                                     <img src="${qrcode}" width="250" height="10" style="display: block; border: 0px;" /><br>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
                     
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-
-</html>
-    
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" style=" padding: 35px; background-color: #141414;" bgcolor="#1b9ba3">
+                                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+                                    <tr>
+                                        <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
+                                            <h2 style="font-size: 20px; font-weight: 800; line-height: 30px; color: #c1842b; margin: 0;">Ticket-ul poate fi tipărit s-au prezentat în format electronic ! </h2>
+                                        </td>
+                                    </tr>
+                                  
+                                </table>
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
     `,
   };
   return await configEmail.sendMail(msg);

@@ -14,6 +14,7 @@ const ticketSchema = new mongoose.Schema(
     pay_type: {
       type: String,
       require: true,
+      enum: ["Card", "Cache"],
     },
     checked: {
       type: Boolean,
