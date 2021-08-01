@@ -5,9 +5,16 @@ const validateNewTicket = async (req, res, next) => {
   await check("pay_type")
     .trim()
     .notEmpty()
-    .withMessage(" Pay type is required. ")
+    .withMessage("Pay type is required.")
+    .run(req);
+
+  await check("pay_type")
     .isLength({ min: 4 })
-    .isIn(["cash", "card", "bitcoin"])
+    .withMessage(" Undefined pay type.")
+    .run(req);
+
+  await check("pay_type")
+    .isIn(["Cashe", "Card"])
     .withMessage(" Undefined pay type.")
     .run(req);
 

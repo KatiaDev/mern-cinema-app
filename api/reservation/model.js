@@ -10,7 +10,7 @@ const reservationSchema = new mongoose.Schema(
 
     seats: [
       {
-        seat: mongoose.Schema.Types.ObjectId,
+        seat: { type: mongoose.Schema.Types.ObjectId, ref: "Seats" },
         client_type: {
           type: String,
           enum: ["Copil", "Elev", "Student", "Adult", "Pensionar"],
@@ -37,6 +37,12 @@ const reservationSchema = new mongoose.Schema(
 
     total_price: {
       type: Number,
+    },
+
+    status: {
+      type: String,
+      require: true,
+      enum: ["Complete", "Incomplete"],
     },
   },
   {

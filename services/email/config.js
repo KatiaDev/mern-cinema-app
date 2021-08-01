@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const inlineBase64 = require("nodemailer-plugin-inline-base64");
 
 const transporter = nodemailer.createTransport({
   host: process.env.HOST,
@@ -9,5 +10,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
+transporter.use("compile", inlineBase64());
 
 module.exports = transporter;

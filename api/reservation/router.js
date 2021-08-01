@@ -32,8 +32,7 @@ router.get(
       reserv_date: req.query.date,
       reserv_hour: req.query.hour,
     })
-      // .populate({ path: "premiere", match: { cinema: req.params.cinema_id } })
-      // .populate({ path: "seats", match: { hall: req.params.hall_id } })
+      
       .distinct("seats")
       .exec()
       .then((reservations) => {
@@ -52,9 +51,12 @@ router.get(
   checkReservationExists,
   async (req, res, next) => {
     Reservations.findById(req.params.reservation_id)
-      .populate("premiere", "-active")
-      .populate("seat")
+      .populate({
+        path: "seats._id",
+        model: Seats,
+      })
       .exec()
+
       .then((reservation) => {
         res.status(200).json(reservation);
       })
@@ -113,6 +115,7 @@ router.post(
       reserv_date: req.body.reserv_date,
       reserv_hour: req.body.reserv_hour,
       total_price: req.body.total_price,
+      status: req.body.status,
     })
       .save()
       .then((newReservation) => {
