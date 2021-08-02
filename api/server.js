@@ -20,13 +20,6 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
-const corsOption = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-};
-
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -69,7 +62,6 @@ if (typeof process.env.CLOUDINARY_URL === "undefined") {
 server.use("/static", express.static("public"));
 server.use(helmet());
 server.use(cors(corsOptions));
-
 server.use(morgan("combined"));
 server.use(cookieParser());
 server.use(express.json());
