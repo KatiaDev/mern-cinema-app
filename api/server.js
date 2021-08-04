@@ -20,13 +20,6 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
-const corsOption = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-};
-
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -46,6 +39,19 @@ const connectDB = async () => {
 
 connectDB();
 
+const whitelist = ["http://localhost:3000", "https://olymp-cinema.vercel.app/"];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
 if (typeof process.env.CLOUDINARY_URL === "undefined") {
   console.warn("!! cloudinary config is undefined !!");
   console.warn("export CLOUDINARY_URL or set dotenv file");
@@ -55,7 +61,7 @@ if (typeof process.env.CLOUDINARY_URL === "undefined") {
 }
 server.use("/static", express.static("public"));
 server.use(helmet());
-server.use(cors(corsOption));
+server.use(cors(corsOptions));
 server.use(morgan("combined"));
 server.use(cookieParser());
 server.use(express.json());
