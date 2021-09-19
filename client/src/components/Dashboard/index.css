@@ -1,0 +1,47 @@
+.main-container {
+  background-color: rgb(161, 159, 159);
+  height: 280vh;
+  /* position: relative;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0; */
+}
+
+@import url("https://fonts.googleapis.com/css?family=Lato:100&display=swap");
+
+.btn-datetime {
+  width: 280px;
+  height: 60px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #a7a9aa;
+  outline: none;
+  transition: 1s ease-in-out;
+}
+
+.svg-style {
+  position: absolute;
+  left: 0;
+  top: 0;
+  fill: none;
+  stroke: #fff;
+  stroke-dasharray: 180 160;
+  stroke-dashoffset: 170 200;
+  transition: 1s ease-in-out;
+}
+
+.btn-datetime:hover {
+  transition: 1s ease-in-out;
+  background: #55595c;
+}
+
+.btn-datetime:hover svg {
+  stroke-dashoffset: -480;
+}
+
+.btn-datetime span {
+  color: white;
+  font-size: 20px;
+  font-weight: 100;
+}

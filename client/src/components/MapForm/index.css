@@ -1,0 +1,24 @@
+.container-map {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.description-location {
+  border: 1px solid white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+.section-cinema,
+.section-address,
+.section-tel,
+.section-email {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+  font-size: 15px;
+  flex-direction: column;
+}

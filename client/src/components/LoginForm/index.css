@@ -1,0 +1,88 @@
+.login-wrapper {
+  display: flex;
+  background-image: url("../../assets/images/Login.jpg");
+  height: 100vh; /* You must set a specified height */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.title {
+  font-family: "Bitter", serif;
+  color: gold;
+}
+
+.styled-hr {
+  color: white;
+  width: 50%;
+}
+
+.styled-h3 {
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.styled-h3:hover {
+  transition: 0.5s;
+  text-decoration: underline;
+  color: gold;
+} 
+
+.styled-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 200px;
+  background-color: RGB(255, 255, 255, 0.1);
+  border-radius: 5px;
+  box-shadow: 0 1px 10px 1px #ffffff;
+}
+
+.styled-button {
+  padding: 8px 16px;
+  border: 1px solid gold;
+  border-radius: 8px;
+  font-family: "Bitter", sans-serif;
+  font-size: 1.2em;
+  color: gold;
+  transition: 0.25s;
+}
+
+.signIn {
+  background: rgb(0, 100, 0, 0.7);
+}
+
+.signUp {
+  background: rgb(255, 0, 0, 0.7);
+}
+
+.styled-button:hover:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em;
+  transform: translateY(-0.25em);
+}
+
+.styled-input.input-custom {
+  width: 85%;
+  outline: none;
+  padding: 5px 16px;
+  border-radius: 8px;
+  font-family: "Bitter", serif;
+  font-size: 1.2em;
+  background: rgb(255, 255, 255);
+  margin: 0.9em;
+}
+.styled-input:focus {
+  box-shadow: 0 1px 10px 1px #ffffff;
+}
+
+.manage-acces {
+margin: 20px;
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.Sign-In,.Sign-Up {
+  margin-left: 10px;
+}

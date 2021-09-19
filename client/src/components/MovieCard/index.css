@@ -1,0 +1,68 @@
+* {
+  font-family: "Poppins", sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.movie_card {
+  width: 250px;
+  margin: 5px;
+}
+
+.movie_card_img {
+  height: 300px;
+}
+.movie_info {
+  color: #5e5c5c;
+}
+
+.movie_info i {
+  font-size: 20px;
+}
+.card-title-movie {
+  height: 50px;
+  color: black;
+  text-align: center;
+}
+
+.card-body a {
+  text-decoration: none;
+}
+
+@media (max-width: 4000px) {
+  .responsive-card {
+    margin: 15px;
+  }
+}
+
+@media (max-width: 1125px) {
+  .responsive-card {
+    margin: 28px;
+  }
+}
+
+@media (max-width: 990px) {
+  .responsive-card {
+    margin: 38px;
+  }
+}
+
+@media (max-width: 770px) {
+  .responsive-card {
+    margin-left: 110px;
+    margin-right: 110px;
+  }
+}
+@media (max-width: 510px) {
+  .responsive-card {
+    margin-left: 80px;
+    margin-right: 80px;
+  }
+}
+@media (max-width: 400px) {
+  .responsive-card {
+    margin: 10px;
+  }
+}

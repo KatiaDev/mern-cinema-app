@@ -1,0 +1,19 @@
+.search-slt {
+  font-size: 0.875rem;
+  margin: 0;
+  width: 150px;
+  line-height: 1.5;
+  color: #55595c;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  height: calc(3rem + 2px) !important;
+  border-radius: 0;
+}
+.wrn-btn {
+  width: 150px;
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: capitalize;
+  height: calc(3rem + 2px) !important;
+  border-radius: 0;
+}

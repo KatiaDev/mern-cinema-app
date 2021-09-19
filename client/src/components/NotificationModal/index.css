@@ -1,0 +1,29 @@
+.info {
+  display: flex;
+  color: black;
+  flex-direction: column;
+  width: 100%;
+}
+
+.fa.fa-check-circle {
+  font-size: 80px;
+  color: #4ae34a;
+  text-align: center;
+}
+
+.fa.fa-times-circle {
+  font-size: 80px;
+  color: #ff0000;
+  text-align: center;
+}
+
+.modal:nth-of-type(even) {
+    z-index: 1052 !important;
+}
+.modal-backdrop.show:nth-of-type(even) {
+    z-index: 1051 !important;
+}
+
+.modal-content {
+  width: none !important;
+}

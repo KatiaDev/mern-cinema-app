@@ -1,0 +1,33 @@
+.header-unauthorize.modal-header {
+  font-size: 16px;
+  text-align: center;
+  color: red;
+}
+
+.body-unauthorize {
+  color: black;
+  text-align: center;
+}
+.error-message {
+  color: red;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.modal-btn {
+  text-align: center;
+  text-decoration: none;
+  border-radius: unset;
+}
+
+.modal-btn:hover {
+text-decoration: none;
+color: inherit;
+text-shadow: 2px 2px 8px black;
+font-size: 1.3em;
+}
+
+.body-unauthorize.modal-body {
+margin-bottom: -25px;
+}

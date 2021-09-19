@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  background-image: url("https://www.maxpixel.net/static/photo/1x/Red-Curtain-Cinema-Background-Theater-Stripes-551797.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+  background-color: #141414;
+  color: #e5e5e5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+td,
+th {
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+th {
+  text-align: center;
+}
+
+.sort-button {
+  display: flex;
+  flex-direction: row;
+  font-weight: bold;
+  padding: 0;
+  align-items: flex-end;
+}
+
+.sort-icon {
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2px;
+}
+.single-icon {
+  margin: 3px;
+  align-self: center;
+}
+
+.spinner-style {
+  text-align: center;
+}

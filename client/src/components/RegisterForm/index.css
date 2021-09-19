@@ -1,0 +1,109 @@
+.register-wrapper {
+  display: flex;
+  background: url("../../assets/images/Login.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.title {
+  font-family: "Bitter", serif;
+  font-size: xx-large;
+  color: gold;
+  margin-bottom: 35px;
+}
+
+.styled-hr {
+  color: white;
+  width: 50%;
+}
+
+.styled-h3 {
+  color: white;
+}
+
+.styled-form {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: RGB(255, 255, 255, 0.1);
+  border-radius: 5px;
+  box-shadow: 0 1px 10px 1px #ffffff;
+  flex-basis: 1000px;
+}
+
+.styled-button {
+  padding: 8px 16px;
+  border: 1px solid gold;
+  border-radius: 8px;
+  font-family: "Bitter", sans-serif;
+  font-size: 1.2em;
+  color: gold;
+  transition: 0.25s;
+}
+
+.signIn {
+  background: rgb(0, 100, 0, 0.7);
+}
+
+.signUp {
+  background: rgb(255, 0, 0, 0.7);
+}
+
+.styled-button:hover:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em;
+  transform: translateY(-0.25em);
+}
+
+.styled-input {
+  width: 75%;
+  outline: none;
+  padding: 5px 16px;
+  border-radius: 8px;
+  font-family: "Bitter", serif;
+  font-size: 1.2em;
+  background: rgb(255, 255, 255);
+  margin: 12px;
+}
+.styled-input:focus {
+  box-shadow: 0 1px 10px 1px #ffffff;
+}
+
+.styled-select {
+  width: 88%;
+  outline: none;
+  padding: 5px 16px;
+  border-radius: 8px;
+  font-family: "Bitter", serif;
+  font-size: 1.2em;
+  background: rgb(255, 255, 255);
+  margin: 0.5em;
+}
+.styled-select:focus {
+  box-shadow: 0 1px 10px 1px #ffffff;
+}
+
+.styled-select > option {
+  color: black;
+  background: rgb(255, 255, 255);
+  display: flex;
+  white-space: pre;
+  min-height: 20px;
+  padding: 0px 2px 1px;
+}
+
+.styled-button.signUp-register {
+  margin-top: 10px;
+  width: 75%;
+  background: rgb(255, 0, 0, 0.7);
+}
+
+label {
+  margin-bottom: -8px;
+  text-align: left;
+  color: white;
+  width: 75%;
+}

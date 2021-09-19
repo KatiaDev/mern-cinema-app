@@ -1,0 +1,61 @@
+.card-header {
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-family: "Encode Sans SC", sans-serif;
+  border-bottom: 4px dotted rgb(255, 255, 255);
+  margin-bottom: 20px;
+}
+
+.reservation-premiere {
+  color:white;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  top: 60px;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 10px white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  
+}
+
+.img-thumbnail{
+    height: auto;
+    padding: 1;
+}
+
+.img-premiere-reserv {
+    height: 150px;
+    width: 220px;
+}
+.body-info-reservation {
+  display: flex;
+  margin-top: -30px;
+}
+.info-reservation {
+  display: flex;
+  flex-grow: 1;
+}
+
+.info-1,
+.info-2,
+.info-3 {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  flex-direction: column;
+  text-align: center;
+}
+
+.img-premiere-reserv {
+  height: 0px;
+}
+
+.info-1 p,
+.info-2 p,
+.info-3 p {
+  letter-spacing: 3px;
+}

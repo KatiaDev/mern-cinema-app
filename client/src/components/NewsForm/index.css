@@ -1,0 +1,13 @@
+.news-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.news-form {
+  padding: 20px;
+  margin-left: 50px;
+  margin-right: 50px;
+  border: 2px solid white;
+  border-radius: 10px;
+  background: rgb(58, 66, 66);
+}

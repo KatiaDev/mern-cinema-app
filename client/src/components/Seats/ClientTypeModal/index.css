@@ -1,0 +1,33 @@
+.styled-input {
+  width: 75%;
+  outline: none;
+  padding: 5px 16px;
+  border-radius: 8px;
+  font-family: "Bitter", serif;
+  font-size: 1.2em;
+  background: rgb(255, 255, 255);
+  margin: 0.5em;
+}
+.styled-input:focus {
+  box-shadow: 0 1px 10px 1px #ffffff;
+}
+
+div.modal-dialog.modal-lg.modal-dialog-centered {
+  justify-content: center;
+  display: flex;
+  width: 30%;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.modal-open {
+  background: rgb(0, 0, 0);
+}
+
+.modal-footer {
+  justify-content: center;
+}
+
+.modal-client_type {
+  border-radius: 15px;
+}

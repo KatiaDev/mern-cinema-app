@@ -30,6 +30,8 @@ Use `mongoose` to setup the schemas.To control the requests coming from the clie
 ### 6. Authentication/Authorization
 ### 7. Server side Testing
 ### 8. Deployment
+API - [http://api-olymp-cinema.herokuapp.com/](http://api-olymp-cinema.herokuapp.com/)
+Client - [https://olymp-cinema.vercel.app/](https://olymp-cinema.vercel.app/)
 
 
 

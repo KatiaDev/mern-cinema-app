@@ -1,0 +1,148 @@
+.choose {
+  display: flex;
+  justify-content: center;
+  padding: 5% 0;
+}
+
+.choose input {
+  display: none;
+}
+
+#male {
+  display: flex;
+  justify-content: center;
+}
+
+#female {
+  display: flex;
+  justify-content: center;
+}
+
+#male span,
+#female span {
+  display: block;
+  background: #ffffff;
+  width: 70px;
+  height: 70px;
+  text-align: center;
+  border-radius: 50%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: 0.5s;
+  font-size: 24px;
+  color: #262626;
+  cursor: pointer;
+}
+
+#male input:checked + span,
+#female input:checked + span {
+  background: #eabf13e8;
+  color: white;
+  cursor: pointer;
+}
+
+.choose .fa {
+  display: block;
+  line-height: 70px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 5px black;
+}
+
+#female input:checked + span .fas {
+  animation: fanimate 7s;
+}
+
+#male input:checked + span .fa {
+  animation: fanimate 7s;
+}
+
+@keyframes fanimate {
+  0% {
+    box-shadow: 0 0 0 0 rgba(236, 182, 3, 0.98);
+  }
+
+  12% {
+    box-shadow: 0 0 0 50px rgba(255, 109, 74, 0);
+  }
+
+  80% {
+    box-shadow: 0 0 0 0px rgba(255, 109, 74, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 50px rgba(255, 109, 74, 0);
+  }
+}
+
+.title-select-method.modal-header {
+  color: black;
+  display: flex;
+  justify-content: center;
+}
+
+.fas.fa-hand-holding-usd {
+  font-size: 40px;
+  margin: 10px;
+}
+
+.fa.fa-credit-card {
+  font-size: 35px;
+}
+
+span.cache-method {
+  box-shadow: 1px 1px 5px black !important;
+}
+
+h6 {
+  color: black;
+}
+
+.align-credit-card {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  justify-content: space-evenly;
+  padding: 10px;
+}
+
+.male-container,
+.female-container {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.title-select-method {
+  text-align: center;
+}
+
+.select-method-payment.btn.btn-primary {
+  border-top: 2px solid black;
+  width: 100%;
+  background: #eabf13e8 !important;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  color: black;
+  font-size: 20px;
+}
+
+.select-method-payment.btn.btn-primary:hover {
+  background: red !important;
+  border-color: black;
+
+  color: white !important;
+}
+
+@media screen and (max-width: 985px) {
+  .align-credit-card {
+    flex-direction: column;
+    align-items: center;
+  }
+  .male-container,
+  .female-container {
+    margin-bottom: 20px;
+    align-items: center;
+  }
+}
+
+.modal-dialog.modal-lg.modal-dialog-centered {
+  width: auto !important;
+}

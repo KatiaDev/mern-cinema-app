@@ -1,0 +1,130 @@
+#booking {
+  font-family: "Raleway", sans-serif;
+}
+.booking-title {
+  margin: 20px;
+  text-align: center;
+}
+.booking-form .form-header {
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.booking-form .form-header h1 {
+  font-weight: 700;
+  text-transform: capitalize;
+  font-size: 42px;
+  margin: 0px;
+  color: #fff;
+}
+
+.booking-form .form-group {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.booking-form .form-control {
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 60px;
+  padding: 0px 25px;
+  border: none;
+  border-radius: 40px;
+  color: #fff;
+  -webkit-box-shadow: 0px 0px 0px 2px transparent;
+  box-shadow: 0px 0px 0px 2px transparent;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.booking-form .form-control::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.booking-form .form-control:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.booking-form .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.booking-form .form-control:focus {
+  -webkit-box-shadow: 0px 0px 0px 2px #cca012;
+  box-shadow: 0px 0px 0px 2px #cca012;
+}
+
+.booking-form input[type="date"].form-control {
+  padding-top: 3px;
+}
+
+.booking-form input[type="date"].form-control:invalid {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.booking-form input[type="date"].form-control + .form-label {
+  opacity: 1;
+  top: 10px;
+}
+
+.booking-form select.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.booking-form select.form-control:invalid {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.booking-form select.form-control + .select-arrow {
+  position: absolute;
+  right: 15px;
+
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.booking-form select.form-control option {
+  color: #000;
+}
+
+.booking-form .form-label {
+  position: absolute;
+  top: -10px;
+  left: 25px;
+  opacity: 0;
+  color: #cca012;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  height: 15px;
+  line-height: 15px;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.booking-form .form-group.input-not-empty .form-control {
+  padding-top: 16px;
+}
+
+.booking-form .form-group.input-not-empty .form-label {
+  opacity: 1;
+  top: 10px;
+}
+
+.submit-btn {
+  color: #fff;
+  background-color: #cca012;
+  font-weight: 700;
+  width: 300px;
+  height: 60px;
+  border-radius: 40px;
+  border: none;
+  text-transform: uppercase;
+  font-size: 16px;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}

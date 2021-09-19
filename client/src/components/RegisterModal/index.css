@@ -1,0 +1,16 @@
+.header-title {
+  display: flex;
+  color: black;
+  flex-direction: column;
+  width: 100%;
+}
+
+.fa.fa-check-circle {
+  font-size: 80px;
+  color: #4ae34a;
+  text-align: center;
+}
+
+.header-succes {
+  color: #4ae34a;
+}
