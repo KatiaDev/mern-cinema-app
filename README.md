@@ -1,4 +1,4 @@
-# cinema-project-backend
+# cinema-project
   Creating a Web API using Nodejs and Express.
 
 ## Prerequisites
